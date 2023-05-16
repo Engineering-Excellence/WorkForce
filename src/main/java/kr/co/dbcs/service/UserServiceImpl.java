@@ -5,6 +5,7 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 import kr.co.dbcs.util.JdbcManager;
@@ -12,6 +13,10 @@ import kr.co.dbcs.util.JdbcManager;
 public class UserServiceImpl implements UserService {
 	static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 	static BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));;
+	static PreparedStatement pstmtInsert, pstmtSelect;
+	
+	private String sqlInsert = "INSERT INTO USER VALUES(?, ?, 0, 100, 100)";
+	private String sqlSearch = "";
 	
 
 	@Override
@@ -43,8 +48,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public void signUp() {
-		// TODO Auto-generated method stub
-
+		
 	}
 
 	@Override
