@@ -1,5 +1,11 @@
 package kr.co.dbcs.service;
 
+import kr.co.dbcs.controller.HomeController;
+import kr.co.dbcs.util.JdbcManager;
+import kr.co.dbcs.util.LoginSHA;
+import kr.co.dbcs.util.Validation;
+import lombok.extern.slf4j.Slf4j;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -8,12 +14,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-
-import kr.co.dbcs.controller.HomeController;
-import kr.co.dbcs.util.JdbcManager;
-import kr.co.dbcs.util.LoginSHA;
-import kr.co.dbcs.util.Validation;
-import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class UsrServiceImpl implements UsrService {
@@ -49,16 +49,21 @@ public class UsrServiceImpl implements UsrService {
 
             int num = Integer.parseInt(br.readLine());
 
-            if (num == 1) {
-                signUp();
-            } else if (num == 2) {
-                String userId = signIn();
-                HomeController.menu(userId);
-            } else if (num == 3) { // 종료
-                System.exit(0);
-            } else {
-                bw.write("1번과 2번 중 번호를 입력해주시길 바랍니다.\n");
-                bw.flush();
+            switch (num) {
+                case 1:
+                    signUp();
+                    break;
+                case 2:
+                    String userId = signIn();
+                    HomeController.menu(userId);
+                    return;
+                case 3:
+                    System.exit(0);
+                    break;
+                default:
+                    bw.write("1, 2, 3번 중 번호를 입력해주시길 바랍니다.\n");
+                    bw.flush();
+                    break;
             }
         }
     } // start end
@@ -111,10 +116,10 @@ public class UsrServiceImpl implements UsrService {
             } else {
                 pw = cPw;
             }
-            
+
             salt = LoginSHA.Salt();
             String pw_encrypt = LoginSHA.SHA512(pw, salt);
-            
+
             pstmtInsert.setString(1, id);
             pstmtInsert.setString(2, pw_encrypt);
 
@@ -132,11 +137,11 @@ public class UsrServiceImpl implements UsrService {
         pstmtInsert = conn.prepareStatement(userInsert);
 
         bw.write("개인 인적사항을 입력해주시길 바랍니다.\n");
-        bw.write("귀하의 이름 : \n");
+        bw.write("귀하의 이름 : ");
         bw.flush();
         String name = br.readLine();
 
-        bw.write("귀하의 생년월일 : \n");
+        bw.write("귀하의 생년월일 : ");
         bw.write("1900-11-22 형식으로 입력 바랍니다.\n");
         bw.flush();
         String birthday = null;
@@ -153,8 +158,8 @@ public class UsrServiceImpl implements UsrService {
             }
         }
 
-        bw.write("귀하의 성별 : \n");
         bw.write("1. 남성, 2. 여성\n");
+        bw.write("귀하의 성별 : ");
         bw.flush();
 
         boolean gender = false;
@@ -169,7 +174,7 @@ public class UsrServiceImpl implements UsrService {
             bw.flush();
         }
 
-        bw.write("귀하의 연락처 : \n");
+        bw.write("귀하의 연락처 : ");
         bw.flush();
 
         String contact = br.readLine();
@@ -189,10 +194,10 @@ public class UsrServiceImpl implements UsrService {
     @Override
     public String signIn() throws IOException, SQLException, NoSuchAlgorithmException {
         while (true) {
-            bw.write("ID : \n");
+            bw.write("ID : ");
             bw.flush();
             String id = br.readLine();
-            bw.write("PW : \n");
+            bw.write("PW : ");
             bw.flush();
             String pw = br.readLine();
 
@@ -214,10 +219,10 @@ public class UsrServiceImpl implements UsrService {
             while (rs.next()) {
                 dataPw = rs.getString("pw");
             }
-            
+
             salt = LoginSHA.Salt();
             String pw_decrypt = LoginSHA.SHA512(pw, salt);
-            
+
             if (id.equals(dataId)) {
                 if (pw_decrypt.equals(dataPw)) {
                     bw.write("로그인 성공\n");
