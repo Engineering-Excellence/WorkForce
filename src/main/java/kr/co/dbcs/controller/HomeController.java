@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -18,9 +19,10 @@ public class HomeController {
     PreparedStatement pstmt = JdbcManager.pstmt;
     ResultSet rs = JdbcManager.rs;
     BufferedReader br = JdbcManager.BR;
-    BufferedWriter bw = JdbcManager.BW;
+    static BufferedWriter bw = JdbcManager.BW;
 
-    public static void menu(String userId) {
-    	
+    public static void menu(String userId) throws IOException {
+    	bw.write(userId);
+    	bw.flush();
     }
 }
