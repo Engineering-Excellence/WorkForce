@@ -9,7 +9,7 @@ public interface UsrService {
 
     void signUp() throws SQLException, IOException;
 
-    void signIn();
+    String signIn() throws IOException, SQLException;
     
     void input(String id) throws IOException, SQLException;
 }
