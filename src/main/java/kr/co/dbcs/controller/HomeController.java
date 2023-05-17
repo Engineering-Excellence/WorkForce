@@ -14,8 +14,9 @@ public class HomeController {
     private static final BufferedWriter bw = JdbcManager.BW;
 
     public static void menu(String userId) throws IOException {
-
-        bw.write(userId);
-        bw.flush();
+    	if(userId.equals("exit")) return;
+    	
+    	bw.write(userId);
+    	bw.flush();
     }
 }

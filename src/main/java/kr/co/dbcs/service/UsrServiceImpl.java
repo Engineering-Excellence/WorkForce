@@ -70,6 +70,7 @@ public class UsrServiceImpl implements UsrService {
         String id = null;
         String pw = null;
 
+
         while (true) {
             bw.write("생성하실 ID를 입력해 주시길 바랍니다.");
             bw.flush();
@@ -77,7 +78,7 @@ public class UsrServiceImpl implements UsrService {
             String cId = br.readLine();
 
             pstmtSelect.setString(1, cId);
-            ResultSet rs = pstmtSelect.executeQuery();
+            rs = pstmtSelect.executeQuery();
             String dataId = null;
             while (rs.next()) {
                 dataId = rs.getString(1);
@@ -191,7 +192,7 @@ public class UsrServiceImpl implements UsrService {
             pstmtSelect = conn.prepareStatement(checkId);
 
             pstmtSelect.setString(1, id);
-            ResultSet rs = pstmtSelect.executeQuery();
+            rs = pstmtSelect.executeQuery();
 
             String dataId = null;
             while (rs.next()) {
@@ -201,10 +202,10 @@ public class UsrServiceImpl implements UsrService {
             pstmtSelect = conn.prepareStatement(checkPw);
 
             pstmtSelect.setString(1, id);
-            ResultSet rs2 = pstmtSelect.executeQuery();
+            rs = pstmtSelect.executeQuery();
             String dataPw = null;
-            while (rs2.next()) {
-                dataPw = rs2.getString("pw");
+            while (rs.next()) {
+                dataPw = rs.getString("pw");
             }
 
             if (id.equals(dataId)) {
