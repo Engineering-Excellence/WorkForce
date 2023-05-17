@@ -1,15 +1,19 @@
 package kr.co.dbcs.service;
 
-import kr.co.dbcs.controller.HomeController;
-import kr.co.dbcs.util.JdbcManager;
-import kr.co.dbcs.util.Validation;
-import lombok.extern.slf4j.Slf4j;
-
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+import kr.co.dbcs.controller.HomeController;
+import kr.co.dbcs.util.JdbcManager;
+import kr.co.dbcs.util.LoginSHA;
+import kr.co.dbcs.util.Validation;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class UsrServiceImpl implements UsrService {
@@ -17,7 +21,6 @@ public class UsrServiceImpl implements UsrService {
     private static final BufferedReader br = JdbcManager.BR;
     private static final BufferedWriter bw = JdbcManager.BW;
     private Connection conn = JdbcManager.getInstance().getConnection();
-    private Statement stmt = conn.createStatement();
     private ResultSet rs;
     private PreparedStatement pstmtInsert, pstmtSelect;
 
@@ -25,6 +28,7 @@ public class UsrServiceImpl implements UsrService {
     private String userInsert = "INSERT INTO EMP VALUES(?, ?, ?, ?, ?, TO_CHAR(SYSDATE, 'YYYY-MM-DD'), 0, 100, 100)";
     private String checkId = "SELECT USRID FROM USR WHERE USRID = ?";
     private String checkPw = "SELECT PW FROM USR WHERE USRID = ?";
+    private String salt;
 
     public UsrServiceImpl() throws SQLException, ClassNotFoundException {
     }
@@ -107,9 +111,12 @@ public class UsrServiceImpl implements UsrService {
             } else {
                 pw = cPw;
             }
-
+            
+            salt = LoginSHA.Salt();
+            String pw_encrypt = LoginSHA.SHA512(pw, salt);
+            
             pstmtInsert.setString(1, id);
-            pstmtInsert.setString(2, pw);
+            pstmtInsert.setString(2, pw_encrypt);
 
             pstmtInsert.executeUpdate();
 
@@ -207,9 +214,11 @@ public class UsrServiceImpl implements UsrService {
             while (rs.next()) {
                 dataPw = rs.getString("pw");
             }
-
+            
+            String pw_decrypt = LoginSHA.SHA512(pw, salt);
+            
             if (id.equals(dataId)) {
-                if (pw.equals(dataPw)) {
+                if (pw_decrypt.equals(dataPw)) {
                     bw.write("로그인 성공\n");
                     bw.flush();
                     return id;
