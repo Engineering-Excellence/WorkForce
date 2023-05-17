@@ -22,7 +22,7 @@ public class JdbcManager {
     public static PreparedStatement pstmt;
     public static ResultSet rs;
 
-    public static Connection getConnection(String dsn) throws ClassNotFoundException, SQLException {
+    public static synchronized Connection getConnection(String dsn) throws ClassNotFoundException, SQLException {
         if (dsn.equalsIgnoreCase(DSN) && (conn == null || conn.isClosed())) {
             initializeConnection();
         }
@@ -36,7 +36,7 @@ public class JdbcManager {
         log.info("CONN SUCCESS");
     }
 
-    public static void closeConnection() throws SQLException {
+    public static synchronized void closeConnection() throws SQLException {
         if (rs != null && !rs.isClosed()) {
             rs.close();
             log.info("RS CLOSE");
