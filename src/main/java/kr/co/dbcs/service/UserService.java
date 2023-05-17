@@ -7,7 +7,9 @@ public interface UserService {
 
     void start() throws ClassNotFoundException, SQLException, IOException;
 
-    void signUp();
+    void signUp() throws SQLException, IOException;
 
     void signIn();
+    
+    void input(String id) throws IOException, SQLException;
 }
