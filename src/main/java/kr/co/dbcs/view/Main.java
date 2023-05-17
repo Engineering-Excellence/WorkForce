@@ -1,19 +1,20 @@
 package kr.co.dbcs.view;
 
-import java.io.IOException;
-import java.sql.SQLException;
-
+import kr.co.dbcs.service.UsrService;
 import kr.co.dbcs.service.UsrServiceImpl;
 import kr.co.dbcs.util.JdbcManager;
 
+import java.io.IOException;
+import java.sql.SQLException;
+
 public class Main {
 
-	static final UsrServiceImpl usrServiceImpl = new UsrServiceImpl();
-    
-	public static void main(String[] args) throws ClassNotFoundException, IOException, SQLException {
+    private static final UsrService USR_SERVICE = new UsrServiceImpl();
 
-		JdbcManager.getConnection("ORACLE");
-		usrServiceImpl.start();
-		JdbcManager.closeConnection();
+    public static void main(String[] args) throws ClassNotFoundException, IOException, SQLException {
+
+        JdbcManager.getConnection("ORACLE");
+        USR_SERVICE.start();
+        JdbcManager.closeConnection();
     }
 }

@@ -31,6 +31,7 @@ public class UsrServiceImpl implements UsrService {
 			JdbcManager.BW.flush();
 
 			int num = Integer.parseInt(JdbcManager.BR.readLine());
+
 			if (num == 1) {
 				signUp();
 			} else if (num == 2) {
