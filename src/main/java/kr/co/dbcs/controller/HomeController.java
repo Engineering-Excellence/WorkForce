@@ -1,6 +1,7 @@
-package kr.co.dbcs.service;
+package kr.co.dbcs.controller;
 
 import kr.co.dbcs.util.JdbcManager;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -9,7 +10,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 
-public class EmpServiceImpl implements EmpService {
+@Slf4j
+public class HomeController {
 
     Connection conn = JdbcManager.conn;
     Statement stmt = JdbcManager.stmt;
@@ -18,8 +20,5 @@ public class EmpServiceImpl implements EmpService {
     BufferedReader br = JdbcManager.BR;
     BufferedWriter bw = JdbcManager.BW;
 
-    @Override
-    public void showEmpInfo() {
-
-    }
+    
 }

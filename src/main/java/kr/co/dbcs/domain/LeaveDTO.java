@@ -10,6 +10,5 @@ public class LeaveDTO { // 휴가 테이블
     java.sql.Date endDate;  // 종료일
     String reason;  // 사유
     byte apvStat;   // 승인 여부
-    String userID;  // FK, 사용자 ID
-    int leaveTypeID;    // FK, 휴가종류 ID
+    String usrID;  // FK, 사용자 ID
 }
