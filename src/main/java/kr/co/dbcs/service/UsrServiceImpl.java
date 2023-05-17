@@ -3,28 +3,28 @@ package kr.co.dbcs.service;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
-import java.sql.Connection;
+import java.security.NoSuchAlgorithmException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import kr.co.dbcs.controller.HomeController;
 import kr.co.dbcs.util.JdbcManager;
+import kr.co.dbcs.util.LoginSHA;
 import kr.co.dbcs.util.Validation;
 
 public class UsrServiceImpl implements UsrService {
 	static PreparedStatement pstmtInsert, pstmtSelect;
-	Connection conn = JdbcManager.conn;
 	BufferedReader br = JdbcManager.BR;
 	BufferedWriter bw = JdbcManager.BW;
 
-	private String signUp = "INSERT INTO USR VALUES(?, ?, 0, 100, 100)";
-	private String userInsert = "INSERT INTO EMP VALUES(?, ?, ?, ?, ?, TO_CHAR(SYSDATE, 'YYYY-MM-DD'), 0)";
+	private String signUp = "INSERT INTO USR VALUES(?, ?, 0)";
+	private String userInsert = "INSERT INTO EMP VALUES(?, ?, ?, ?, ?, TO_CHAR(SYSDATE, 'YYYY-MM-DD'), 0, 100, 100)";
 	private String checkId = "SELECT USRID FROM USR WHERE USRID = ?";
 	private String checkPw = "SELECT PW FROM USR WHERE USRID = ?";
 
 	@Override
-	public void start() throws ClassNotFoundException, SQLException, IOException {
+	public void start() throws ClassNotFoundException, SQLException, IOException, NoSuchAlgorithmException {
 
 		while (true) {
 
@@ -45,7 +45,7 @@ public class UsrServiceImpl implements UsrService {
 				String userId = signIn();
 				HomeController.menu(userId);
 			} else if (num == 3) { // 종료
-				break;
+				System.exit(0);
 			} else {
 				bw.write("1번과 2번 중 번호를 입력해주시길 바랍니다.\n");
 				bw.flush();
@@ -54,9 +54,9 @@ public class UsrServiceImpl implements UsrService {
 	} // start end
 
 	@Override
-	public void signUp() throws SQLException, IOException {
-		pstmtInsert = conn.prepareStatement(signUp);
-		pstmtSelect = conn.prepareStatement(checkId);
+	public void signUp() throws SQLException, IOException, NoSuchAlgorithmException {
+		pstmtInsert = JdbcManager.conn.prepareStatement(signUp);
+		pstmtSelect = JdbcManager.conn.prepareStatement(checkId);
 
 		String id = null;
 		String pw = null;
@@ -97,7 +97,7 @@ public class UsrServiceImpl implements UsrService {
 			} else {
 				pw = cPw;
 			}
-
+			
 			pstmtInsert.setString(1, id);
 			pstmtInsert.setString(2, pw);
 
@@ -112,7 +112,7 @@ public class UsrServiceImpl implements UsrService {
 
 	@Override
 	public void input(String id) throws IOException, SQLException {
-		pstmtInsert = conn.prepareStatement(userInsert);
+		pstmtInsert = JdbcManager.conn.prepareStatement(userInsert);
 
 		bw.write("개인 인적사항을 입력해주시길 바랍니다.\n");
 		bw.write("귀하의 이름 : \n");
@@ -165,12 +165,12 @@ public class UsrServiceImpl implements UsrService {
 
 		pstmtInsert.executeUpdate();
 
-		bw.write("회원가입이 완료되었습니다.");
+		bw.write("회원가입이 완료되었습니다.\n\n");
 		bw.flush();
 	}
 
 	@Override
-	public String signIn() throws IOException, SQLException {
+	public String signIn() throws IOException, SQLException, NoSuchAlgorithmException {
 		while(true) {
 			bw.write("ID : \n");
 			bw.flush();
@@ -179,7 +179,7 @@ public class UsrServiceImpl implements UsrService {
 			bw.flush();
 			String pw = br.readLine();
 			
-			pstmtSelect = conn.prepareStatement(checkId);
+			pstmtSelect = JdbcManager.conn.prepareStatement(checkId);
 			
 			pstmtSelect.setString(1, id);
 			ResultSet rs = pstmtSelect.executeQuery();
@@ -189,7 +189,7 @@ public class UsrServiceImpl implements UsrService {
 				dataId = rs.getString(1);
 			}
 			
-			pstmtSelect = conn.prepareStatement(checkPw);
+			pstmtSelect = JdbcManager.conn.prepareStatement(checkPw);
 			
 			pstmtSelect.setString(1, id);
 			ResultSet rs2 = pstmtSelect.executeQuery();
