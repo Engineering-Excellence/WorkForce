@@ -215,6 +215,7 @@ public class UsrServiceImpl implements UsrService {
                 dataPw = rs.getString("pw");
             }
             
+            salt = LoginSHA.Salt();
             String pw_decrypt = LoginSHA.SHA512(pw, salt);
             
             if (id.equals(dataId)) {
