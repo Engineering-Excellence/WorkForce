@@ -118,12 +118,6 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public void signIn() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
 	public void input(String id) throws IOException, SQLException {
 		br = new BufferedReader(new InputStreamReader(System.in));
 		bw = new BufferedWriter(new OutputStreamWriter(System.out));
@@ -183,5 +177,11 @@ public class UserServiceImpl implements UserService {
 		bw.flush();
 		
 		bw.close();
+	}
+	
+
+	@Override
+	public void signIn() {
+		
 	}
 }
