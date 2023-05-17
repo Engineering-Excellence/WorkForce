@@ -9,9 +9,8 @@ import java.util.Base64;
 public class LoginSHA {
 	public static String Salt() throws NoSuchAlgorithmException {
 		String salt = "";
-		SecureRandom random = SecureRandom.getInstance("SHA1PRNG");
-		byte[] bytes = new byte[16];
-		random.nextBytes(bytes);
+		byte[] bytes = {3,4,5,6,7,8,1,3,4,9,0,4,5,7,6,2};
+		
 		salt = new String(Base64.getEncoder().encode(bytes));
 		
 		return salt;
