@@ -13,12 +13,12 @@ import java.util.logging.Logger;
 import kr.co.dbcs.util.JdbcManager;
 import kr.co.dbcs.util.Validation;
 
-public class UserServiceImpl implements UserService {
+public class UsrServiceImpl implements UsrService {
 	BufferedReader br = null;
 	BufferedWriter bw = null;
 	static PreparedStatement pstmtInsert, pstmtSelect;
 	
-	private static final Logger LOGGER = Logger.getLogger(UserServiceImpl.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(UsrServiceImpl.class.getName());
 	
 	private String signUp = "INSERT INTO USR VALUES(?, ?, 0, 100, 100)";
 	private String userInsert = "INSERT INTO EMP VALUES(?, ?, ?, ?, ?, TO_CHAR(SYSDATE, 'YYYY-MM-DD'), 0, 12)";

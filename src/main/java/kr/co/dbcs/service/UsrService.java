@@ -3,7 +3,7 @@ package kr.co.dbcs.service;
 import java.io.IOException;
 import java.sql.SQLException;
 
-public interface UserService {
+public interface UsrService {
 
     void start() throws ClassNotFoundException, SQLException, IOException;
 
