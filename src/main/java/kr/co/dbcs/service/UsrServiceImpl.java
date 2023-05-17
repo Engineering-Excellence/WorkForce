@@ -98,6 +98,8 @@ public class UsrServiceImpl implements UsrService {
 				pw = cPw;
 			}
 			
+			
+			
 			pstmtInsert.setString(1, id);
 			pstmtInsert.setString(2, pw);
 
@@ -172,12 +174,16 @@ public class UsrServiceImpl implements UsrService {
 	@Override
 	public String signIn() throws IOException, SQLException, NoSuchAlgorithmException {
 		while(true) {
+			bw.write("뒤로가길 원하시면 0번을 누르세요.\n");
 			bw.write("ID : \n");
 			bw.flush();
 			String id = br.readLine();
+			if(id.equals("0")) return "exit";
+			
 			bw.write("PW : \n");
 			bw.flush();
 			String pw = br.readLine();
+			if(pw.equals("0")) return "exit";
 			
 			pstmtSelect = JdbcManager.conn.prepareStatement(checkId);
 			

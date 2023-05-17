@@ -22,6 +22,10 @@ public class HomeController {
     static BufferedWriter bw = JdbcManager.BW;
 
     public static void menu(String userId) throws IOException {
+    	if(userId.equals("exit")) return;
+    	
+    	
+    	
     	bw.write(userId);
     	bw.flush();
     }
