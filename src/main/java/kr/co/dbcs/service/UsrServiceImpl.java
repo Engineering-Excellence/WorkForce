@@ -3,12 +3,14 @@ package kr.co.dbcs.service;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import kr.co.dbcs.controller.HomeController;
 import kr.co.dbcs.util.JdbcManager;
+import kr.co.dbcs.util.LoginSHA;
 import kr.co.dbcs.util.Validation;
 
 public class UsrServiceImpl implements UsrService {
@@ -16,13 +18,13 @@ public class UsrServiceImpl implements UsrService {
 	BufferedReader br = JdbcManager.BR;
 	BufferedWriter bw = JdbcManager.BW;
 
-	private String signUp = "INSERT INTO USR VALUES(?, ?, 0, 100, 100)";
-	private String userInsert = "INSERT INTO EMP VALUES(?, ?, ?, ?, ?, TO_CHAR(SYSDATE, 'YYYY-MM-DD'), 0)";
+	private String signUp = "INSERT INTO USR VALUES(?, ?, 0)";
+	private String userInsert = "INSERT INTO EMP VALUES(?, ?, ?, ?, ?, TO_CHAR(SYSDATE, 'YYYY-MM-DD'), 0, 100, 100)";
 	private String checkId = "SELECT USRID FROM USR WHERE USRID = ?";
 	private String checkPw = "SELECT PW FROM USR WHERE USRID = ?";
 
 	@Override
-	public void start() throws ClassNotFoundException, SQLException, IOException {
+	public void start() throws ClassNotFoundException, SQLException, IOException, NoSuchAlgorithmException {
 
 		while (true) {
 
@@ -52,7 +54,7 @@ public class UsrServiceImpl implements UsrService {
 	} // start end
 
 	@Override
-	public void signUp() throws SQLException, IOException {
+	public void signUp() throws SQLException, IOException, NoSuchAlgorithmException {
 		pstmtInsert = JdbcManager.conn.prepareStatement(signUp);
 		pstmtSelect = JdbcManager.conn.prepareStatement(checkId);
 
@@ -95,7 +97,7 @@ public class UsrServiceImpl implements UsrService {
 			} else {
 				pw = cPw;
 			}
-
+			
 			pstmtInsert.setString(1, id);
 			pstmtInsert.setString(2, pw);
 
@@ -163,12 +165,12 @@ public class UsrServiceImpl implements UsrService {
 
 		pstmtInsert.executeUpdate();
 
-		bw.write("회원가입이 완료되었습니다.");
+		bw.write("회원가입이 완료되었습니다.\n\n");
 		bw.flush();
 	}
 
 	@Override
-	public String signIn() throws IOException, SQLException {
+	public String signIn() throws IOException, SQLException, NoSuchAlgorithmException {
 		while(true) {
 			bw.write("ID : \n");
 			bw.flush();
