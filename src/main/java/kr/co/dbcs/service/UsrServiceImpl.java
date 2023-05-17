@@ -1,15 +1,22 @@
 package kr.co.dbcs.service;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import kr.co.dbcs.controller.HomeController;
 import kr.co.dbcs.util.JdbcManager;
 import kr.co.dbcs.util.Validation;
 
 public class UsrServiceImpl implements UsrService {
 	static PreparedStatement pstmtInsert, pstmtSelect;
+	Connection conn = JdbcManager.conn;
+	BufferedReader br = JdbcManager.BR;
+	BufferedWriter bw = JdbcManager.BW;
 
 	private String signUp = "INSERT INTO USR VALUES(?, ?, 0, 100, 100)";
 	private String userInsert = "INSERT INTO EMP VALUES(?, ?, ?, ?, ?, TO_CHAR(SYSDATE, 'YYYY-MM-DD'), 0)";
@@ -21,43 +28,44 @@ public class UsrServiceImpl implements UsrService {
 
 		while (true) {
 
-			JdbcManager.BW.write("======================================================================\n");
-			JdbcManager.BW.write("|\t\t\t임직원근태관리 시스템\t\t\t     |\n");
-			JdbcManager.BW.write("======================================================================\n");
-			JdbcManager.BW.write("|\t    1. 회원가입\t\t   |\t        2. 로그인\t     |\n");
-			JdbcManager.BW.write("======================================================================\n");
-			JdbcManager.BW.write("|\t\t원하는 기능을 선택하세요.(3번 : 종료)\t\t     |\n");
-			JdbcManager.BW.write("======================================================================\n");
-			JdbcManager.BW.flush();
+			bw.write("======================================================================\n");
+			bw.write("|\t\t\t임직원근태관리 시스템\t\t\t     |\n");
+			bw.write("======================================================================\n");
+			bw.write("|\t    1. 회원가입\t\t   |\t        2. 로그인\t     |\n");
+			bw.write("======================================================================\n");
+			bw.write("|\t\t원하는 기능을 선택하세요.(3번 : 종료)\t\t     |\n");
+			bw.write("======================================================================\n");
+			bw.flush();
 
-			int num = Integer.parseInt(JdbcManager.BR.readLine());
+			int num = Integer.parseInt(br.readLine());
 
 			if (num == 1) {
 				signUp();
 			} else if (num == 2) {
-				signIn();
+				String userId = signIn();
+				HomeController.menu(userId);
 			} else if (num == 3) { // 종료
 				break;
 			} else {
-				JdbcManager.BW.write("1번과 2번 중 번호를 입력해주시길 바랍니다.\n");
-				JdbcManager.BW.flush();
+				bw.write("1번과 2번 중 번호를 입력해주시길 바랍니다.\n");
+				bw.flush();
 			}
 		}
 	} // start end
 
 	@Override
 	public void signUp() throws SQLException, IOException {
-		pstmtInsert = JdbcManager.conn.prepareStatement(signUp);
-		pstmtSelect = JdbcManager.conn.prepareStatement(checkId);
+		pstmtInsert = conn.prepareStatement(signUp);
+		pstmtSelect = conn.prepareStatement(checkId);
 
 		String id = null;
 		String pw = null;
 
 		while (true) {
-			JdbcManager.BW.write("생성하실 ID를 입력해 주시길 바랍니다.");
-			JdbcManager.BW.flush();
+			bw.write("생성하실 ID를 입력해 주시길 바랍니다.");
+			bw.flush();
 
-			String cId = JdbcManager.BR.readLine();
+			String cId = br.readLine();
 
 			pstmtSelect.setString(1, cId);
 			ResultSet rs = pstmtSelect.executeQuery();
@@ -67,24 +75,24 @@ public class UsrServiceImpl implements UsrService {
 			}
 			
 			if (!Validation.ValidateId(cId)) {
-				JdbcManager.BW.write("아이디는 영문 대소문자, 숫자 1자 이상으로 5자 ~ 11자 사이에서 만들 수 있습니다.\n");
-				JdbcManager.BW.flush();
+				bw.write("아이디는 영문 대소문자, 숫자 1자 이상으로 5자 ~ 11자 사이에서 만들 수 있습니다.\n");
+				bw.flush();
 				continue;
 			} else if (cId.equals(dataId)) {
-				JdbcManager.BW.write("이미 존재하는 ID입니다.\n");
-				JdbcManager.BW.flush();
+				bw.write("이미 존재하는 ID입니다.\n");
+				bw.flush();
 				continue;
 			} else {
 				id = cId;
 			}
 
-			JdbcManager.BW.write("비밀번호를 입력해주세요. (비밀번호는 8자이상 영문, 숫자, 특수문자를 포함해야 합니다.)\n");
-			JdbcManager.BW.flush();
-			String cPw = JdbcManager.BR.readLine();
+			bw.write("비밀번호를 입력해주세요. (비밀번호는 8자이상 영문, 숫자, 특수문자를 포함해야 합니다.)\n");
+			bw.flush();
+			String cPw = br.readLine();
 
 			if (!Validation.ValidatePw(cPw)) {
-				JdbcManager.BW.write("비밀번호는 8자이상 영문, 숫자, 특수문자를 포함해야 합니다.\n");
-				JdbcManager.BW.flush();
+				bw.write("비밀번호는 8자이상 영문, 숫자, 특수문자를 포함해야 합니다.\n");
+				bw.flush();
 				continue;
 			} else {
 				pw = cPw;
@@ -95,8 +103,8 @@ public class UsrServiceImpl implements UsrService {
 
 			pstmtInsert.executeUpdate();
 
-			JdbcManager.BW.write(id + "님의 회원가입이 완료되었습니다.\n\n");
-			JdbcManager.BW.flush();
+			bw.write(id + "님의 회원가입이 완료되었습니다.\n\n");
+			bw.flush();
 			break;
 		}
 		input(id);
@@ -104,50 +112,50 @@ public class UsrServiceImpl implements UsrService {
 
 	@Override
 	public void input(String id) throws IOException, SQLException {
-		pstmtInsert = JdbcManager.conn.prepareStatement(userInsert);
+		pstmtInsert = conn.prepareStatement(userInsert);
 
-		JdbcManager.BW.write("개인 인적사항을 입력해주시길 바랍니다.\n");
-		JdbcManager.BW.write("귀하의 이름 : \n");
-		JdbcManager.BW.flush();
-		String name = JdbcManager.BR.readLine();
+		bw.write("개인 인적사항을 입력해주시길 바랍니다.\n");
+		bw.write("귀하의 이름 : \n");
+		bw.flush();
+		String name = br.readLine();
 
-		JdbcManager.BW.write("귀하의 생년월일 : \n");
-		JdbcManager.BW.write("1900-11-22 형식으로 입력 바랍니다.\n");
-		JdbcManager.BW.flush();
+		bw.write("귀하의 생년월일 : \n");
+		bw.write("1900-11-22 형식으로 입력 바랍니다.\n");
+		bw.flush();
 		String birthday = null;
 
 		while (true) {
-			birthday = JdbcManager.BR.readLine();
+			birthday = br.readLine();
 
 			if (!Validation.ValidateBirth(birthday)) {
-				JdbcManager.BW.write("1900-11-22 형식으로 입력 바랍니다.\n");
-				JdbcManager.BW.flush();
+				bw.write("1900-11-22 형식으로 입력 바랍니다.\n");
+				bw.flush();
 				continue;
 			} else {
 				break;
 			}
 		}
 
-		JdbcManager.BW.write("귀하의 성별 : \n");
-		JdbcManager.BW.write("1. 남성, 2. 여성\n");
-		JdbcManager.BW.flush();
+		bw.write("귀하의 성별 : \n");
+		bw.write("1. 남성, 2. 여성\n");
+		bw.flush();
 
 		boolean gender = false;
 
-		String ans = JdbcManager.BR.readLine();
+		String ans = br.readLine();
 		if (ans.equals("1"))
 			gender = true;
 		else if (ans.equals("2"))
 			gender = false;
 		else {
-			JdbcManager.BW.write("입력값 이외의 값을 입력하셨습니다. 1과 2중 하나를 선택해서 입력해주세요.\n");
-			JdbcManager.BW.flush();
+			bw.write("입력값 이외의 값을 입력하셨습니다. 1과 2중 하나를 선택해서 입력해주세요.\n");
+			bw.flush();
 		}
 
-		JdbcManager.BW.write("귀하의 연락처 : \n");
-		JdbcManager.BW.flush();
+		bw.write("귀하의 연락처 : \n");
+		bw.flush();
 
-		String contact = JdbcManager.BR.readLine();
+		String contact = br.readLine();
 
 		pstmtInsert.setString(1, id);
 		pstmtInsert.setString(2, name);
@@ -157,21 +165,21 @@ public class UsrServiceImpl implements UsrService {
 
 		pstmtInsert.executeUpdate();
 
-		JdbcManager.BW.write("회원가입이 완료되었습니다.");
-		JdbcManager.BW.flush();
+		bw.write("회원가입이 완료되었습니다.");
+		bw.flush();
 	}
 
 	@Override
-	public void signIn() throws IOException, SQLException {
+	public String signIn() throws IOException, SQLException {
 		while(true) {
-			JdbcManager.BW.write("ID : \n");
-			JdbcManager.BW.flush();
-			String id = JdbcManager.BR.readLine();
-			JdbcManager.BW.write("PW : \n");
-			JdbcManager.BW.flush();
-			String pw = JdbcManager.BR.readLine();
+			bw.write("ID : \n");
+			bw.flush();
+			String id = br.readLine();
+			bw.write("PW : \n");
+			bw.flush();
+			String pw = br.readLine();
 			
-			pstmtSelect = JdbcManager.conn.prepareStatement(checkId);
+			pstmtSelect = conn.prepareStatement(checkId);
 			
 			pstmtSelect.setString(1, id);
 			ResultSet rs = pstmtSelect.executeQuery();
@@ -181,7 +189,7 @@ public class UsrServiceImpl implements UsrService {
 				dataId = rs.getString(1);
 			}
 			
-			pstmtSelect = JdbcManager.conn.prepareStatement(checkPw);
+			pstmtSelect = conn.prepareStatement(checkPw);
 			
 			pstmtSelect.setString(1, id);
 			ResultSet rs2 = pstmtSelect.executeQuery();
@@ -192,17 +200,17 @@ public class UsrServiceImpl implements UsrService {
 			
 			if (id.equals(dataId)) {
 				if(pw.equals(dataPw)) {
-					JdbcManager.BW.write("로그인 성공\n");
-					JdbcManager.BW.flush();
-					break;
+					bw.write("로그인 성공\n");
+					bw.flush();
+					return id;
 				} else {
-					JdbcManager.BW.write("ID 와 비밀번호가 다릅니다. 확인 후 다시 시도하시길 바랍니다.\n");
-					JdbcManager.BW.flush();
+					bw.write("ID 와 비밀번호가 다릅니다. 확인 후 다시 시도하시길 바랍니다.\n");
+					bw.flush();
 				continue;
 				}
 			}else {
-				JdbcManager.BW.write("ID 와 비밀번호가 다릅니다. 확인 후 다시 시도하시길 바랍니다.\n");
-				JdbcManager.BW.flush();
+				bw.write("ID 와 비밀번호가 다릅니다. 확인 후 다시 시도하시길 바랍니다.\n");
+				bw.flush();
 			continue;
 			}
 		}

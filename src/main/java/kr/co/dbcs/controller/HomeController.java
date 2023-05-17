@@ -20,5 +20,7 @@ public class HomeController {
     BufferedReader br = JdbcManager.BR;
     BufferedWriter bw = JdbcManager.BW;
 
-    
+    public static void menu(String userId) {
+    	
+    }
 }
