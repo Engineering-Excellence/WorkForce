@@ -3,7 +3,7 @@ package kr.co.dbcs.domain;
 import lombok.Data;
 
 @Data
-public class UserDTO {  // 사용자 테이블
+public class UsrDTO {  // 사용자 테이블
 
     String userID;  // PK, 사용자 ID
     String pw;  // 비밀번호
