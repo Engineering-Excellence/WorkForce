@@ -15,8 +15,9 @@ public class UserServiceImpl implements UserService {
 	static BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));;
 	static PreparedStatement pstmtInsert, pstmtSelect;
 	
-	private String sqlInsert = "INSERT INTO USER VALUES(?, ?, 0, 100, 100)";
-	private String sqlSearch = "";
+	private String signUp = "INSERT INTO USER VALUES(?, ?, 0, 100, 100)";
+	private String userInsert = "insert into emp values(";
+	private String signIn = "";
 	
 
 	@Override
