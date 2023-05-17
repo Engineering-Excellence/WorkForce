@@ -7,11 +7,13 @@ import java.sql.SQLException;
 
 public class JdbcTest extends TestCase {
 
+    private static final JdbcManager MANAGER = JdbcManager.getInstance();
+
     public void testMain() throws SQLException, ClassNotFoundException {
 
         // JDBC Test
-        JdbcManager.getConnection("ORACLE");
-        boolean isConnected = !JdbcManager.getConnection("ORACLE").isClosed();
+        MANAGER.getConnection();
+        boolean isConnected = !MANAGER.getConnection().isClosed();
         assertTrue("Connection FAIL", isConnected);
     }
 }
