@@ -10,5 +10,5 @@ CREATE TABLE emp
     hiredate  DATE         NOT NULL,
     sal       NUMBER DEFAULT 0,
     leaveday  NUMBER DEFAULT 0,
-    CONSTRAINT "emp_pk" PRIMARY KEY (usrid)
+    CONSTRAINT emp_pk PRIMARY KEY (usrid)
 );

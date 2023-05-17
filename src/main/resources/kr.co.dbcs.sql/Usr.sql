@@ -5,7 +5,7 @@ DROP TABLE usr CASCADE CONSTRAINTS;
 CREATE TABLE usr
 (
     usrid     VARCHAR2(20)
-        CONSTRAINT "usr_pk"
+        CONSTRAINT usr_pk
             PRIMARY KEY,
     pw        VARCHAR2(40) NOT NULL,
     logintype CHAR         NOT NULL,
