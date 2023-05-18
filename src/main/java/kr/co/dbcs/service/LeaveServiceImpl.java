@@ -19,7 +19,7 @@ public class LeaveServiceImpl implements LeaveService {
 
     public LeaveServiceImpl() throws SQLException, ClassNotFoundException {
     }
-
+    																				
     @Override
     public void leaveMenu() {
 
