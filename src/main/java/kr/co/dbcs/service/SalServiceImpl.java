@@ -14,4 +14,10 @@ public class SalServiceImpl implements SalService{
     
     public SalServiceImpl() throws SQLException {
     }
+
+	@Override
+	public void showMenu() {
+		
+	}
+    
 }
