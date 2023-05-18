@@ -27,7 +27,7 @@ public class UsrServiceImpl implements UsrService {
     private PreparedStatement pstmtInsert, pstmtSelect;
 
     private final String signUp = "INSERT INTO USR VALUES(?, ?, 0)";
-    private final String userInsert = "INSERT INTO EMP VALUES(?, ?, ?, ?, ?, TO_CHAR(SYSDATE, 'YYYY-MM-DD'), 0, 100, 100)";
+    private final String userInsert = "INSERT INTO EMP VALUES(?, ?, ?, ?, ?, TO_CHAR(SYSDATE, 'YYYY-MM-DD'), 0, 12, 100, 100)";
     private final String checkId = "SELECT * FROM USR WHERE USRID = ?";
     private String salt;
 
@@ -61,8 +61,8 @@ public class UsrServiceImpl implements UsrService {
                     signUp();
                     break;
                 case 2:
-                    String userId = signIn();
-                    new HomeController().home(userId);
+                    
+                    new HomeController().home(signIn());
                     return;
                 default:
                     bw.write("1, 2, 3번 중 번호를 입력해주시길 바랍니다.\n");
@@ -93,9 +93,15 @@ public class UsrServiceImpl implements UsrService {
             pstmtSelect.setString(1, cId);
             rs = pstmtSelect.executeQuery();
             String dataId = null;
+            ArrayList<UsrDTO> list = new ArrayList<>();
             while (rs.next()) {
-                dataId = rs.getString(1);
+            	UsrDTO usr = new UsrDTO();
+            	usr.setUsrID(rs.getString(1));
+            	usr.setPw(rs.getString(2));
+            	usr.setLoginType(rs.getBoolean(3));
+            	list.add(usr);
             }
+            dataId = list.get(0).getUsrID();
 
             if (!Validation.ValidateId(cId)) {
                 bw.write("아이디는 영문 대소문자, 숫자 1자 이상으로 5자 ~ 11자 사이에서 만들 수 있습니다.\n");
@@ -197,7 +203,7 @@ public class UsrServiceImpl implements UsrService {
     }
 
     @Override
-    public String signIn() throws IOException, SQLException, NoSuchAlgorithmException {
+    public UsrDTO signIn() throws IOException, SQLException, NoSuchAlgorithmException {
 
         while (true) {
             bw.write("ID : ");
@@ -226,6 +232,8 @@ public class UsrServiceImpl implements UsrService {
             String dataId = list.get(0).getUsrID();
             String dataPw = list.get(0).getPw();
             
+            dataId.split(" ");
+            
             salt = LoginSHA.Salt();
             String pw_decrypt = LoginSHA.SHA512(pw, salt);
 
@@ -233,7 +241,7 @@ public class UsrServiceImpl implements UsrService {
                 if (pw_decrypt.equals(dataPw)) {
                     bw.write("로그인 성공\n");
                     bw.flush();
-                    return id;
+                    return list.get(0);
                 } else {
                     bw.write("ID 와 비밀번호가 다릅니다. 확인 후 다시 시도하시길 바랍니다.\n");
                     bw.flush();

@@ -1,6 +1,7 @@
 package kr.co.dbcs.controller;
 
 import kr.co.dbcs.domain.EmpDTO;
+import kr.co.dbcs.domain.UsrDTO;
 import kr.co.dbcs.service.AdminServiceImpl;
 import kr.co.dbcs.service.EmpServiceImpl;
 import kr.co.dbcs.util.JdbcManager;
@@ -17,14 +18,14 @@ public class HomeController {
     private static final BufferedReader br = JdbcManager.BR;
     private static final BufferedWriter bw = JdbcManager.BW;
 
-    public void home(String usrId) throws IOException, SQLException, ClassNotFoundException {
+    public void home(UsrDTO usrDTO) throws IOException, SQLException, ClassNotFoundException {
 
         clearConsole();
-        bw.write(usrId + "님 환영합니다.\n");
+        bw.write(usrDTO + "님 환영합니다.\n");
         bw.flush();
 
         EmpDTO empDTO = new EmpDTO();
-        empDTO.setUsrID(usrId);
+        empDTO.setUsrID(usrDTO.getUsrID());
 
         EmpServiceImpl empService = new EmpServiceImpl();
 
