@@ -14,7 +14,6 @@ import java.sql.*;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class JdbcManager {
 
-    private static final String DSN = "ORACLE";
     private static final String DRIVER = "oracle.jdbc.driver.OracleDriver";
     private static final String URL = "jdbc:oracle:thin:@192.168.0.30:1521:orcl?useUnicode=true&characterEncoding=utf8";
     //    private static final String URL = "jdbc:oracle:thin:@127.0.0.1:1521:orcl?useUnicode=true&characterEncoding=utf8";
