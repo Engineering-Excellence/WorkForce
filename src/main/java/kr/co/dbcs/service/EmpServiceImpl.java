@@ -16,6 +16,7 @@ public class EmpServiceImpl implements EmpService {
 
     private static final BufferedReader br = JdbcManager.BR;
     private static final BufferedWriter bw = JdbcManager.BW;
+
     private Connection conn = JdbcManager.getInstance().getConnection();
     private ResultSet rs;
     private PreparedStatement pstmt;
@@ -54,6 +55,7 @@ public class EmpServiceImpl implements EmpService {
                     break;
                 case "2":
                     // 인적사항
+                    showEmpInfo();
                     break;
                 case "3":
                     // 휴가
