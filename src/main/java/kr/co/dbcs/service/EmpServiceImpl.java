@@ -28,8 +28,6 @@ public class EmpServiceImpl implements EmpService {
 
         while (true) {
 
-            BW.write("\033[H\033[2J");
-            BW.flush();
             BW.write("\n======================================================================\n");
             BW.write("|\t\t\t임직원근태관리 근로자 메뉴\t\t\t     |\n");
             BW.write("======================================================================\n");

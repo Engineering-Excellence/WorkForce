@@ -34,7 +34,12 @@ public class HomeController {
                     break;
                 case "2":
                     // 관리자
-                    new AdminServiceImpl().adminMenu();
+                	if(usrDTO.isLoginType()) {
+                		new AdminServiceImpl(usrDTO.getUsrID()).adminMenu();
+                	} else {
+                		BW.write("관리자 아이디가 아닙니다. 관리자에게 문의하세요.\n");
+                		BW.flush();
+                	}
                     break;
                 case "3":
                     // 서비스 메서드
