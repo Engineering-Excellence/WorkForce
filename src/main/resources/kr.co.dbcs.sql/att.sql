@@ -1,14 +1,14 @@
-DROP TABLE attrecord;
+DROP TABLE att;
 
-CREATE TABLE attrecord
+CREATE TABLE att
 (
     recordid  NUMBER
-        CONSTRAINT attrecord_pk
+        CONSTRAINT att_pk
             PRIMARY KEY,
     attdate   DATE         NOT NULL,
     starttime TIMESTAMP    NOT NULL,
     endtime   TIMESTAMP,
     usrid     VARCHAR2(20) NOT NULL
-        CONSTRAINT attrecord_usr_usrid_fk
+        CONSTRAINT att_usr_usrid_fk
             REFERENCES usr (usrid)
 );

@@ -52,15 +52,10 @@ public class EmpServiceImpl implements EmpService {
                     BW.flush();
                     return;
                 case "1":
-<<<<<<< Updated upstream
                     BW.write("출퇴근 메뉴로 이동합니다.\n");
                     BW.flush();
-=======
-                	BW.write("출퇴근 메뉴로 이동합니다.\n");
-                	BW.flush();
->>>>>>> Stashed changes
-                    AttRecordService Att = new AttRecordServiceImpl();
-                    Att.attRecordMenu();
+                    AttService attService = new AttServiceImpl();
+                    attService.attMenu();
                     // 출퇴근 확인
                     break;
                 case "2":
