@@ -1,54 +1,50 @@
 package kr.co.dbcs.service;
 
-import kr.co.dbcs.util.JdbcManager;
+import kr.co.dbcs.domain.EmpDTO;
 import lombok.extern.slf4j.Slf4j;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
+
+import static kr.co.dbcs.util.JdbcManager.*;
 
 @Slf4j
 public class EmpServiceImpl implements EmpService {
 
-    private static final BufferedReader br = JdbcManager.BR;
-    private static final BufferedWriter bw = JdbcManager.BW;
-
-    private Connection conn = JdbcManager.getInstance().getConnection();
-    private ResultSet rs;
+    private final Connection conn = MANAGER.getConnection();
+    private final Statement stmt = MANAGER.getStatement();
     private PreparedStatement pstmt;
+    private ResultSet rs;
+    private EmpDTO empDTO = new EmpDTO();
 
-    private final String SELECT_EMP = "SELECT * FROM EMP WHERE EMPNO = ?";
     private final String UPDATE_EMP = "UPDATE EMP SET CONTACT = ?, SET SAL = ?, SET DEPTCODE = ?, SET POSCODE = ? WHERE USRID = ?";
 
-    public EmpServiceImpl() throws SQLException, ClassNotFoundException {
+    public EmpServiceImpl(String usrId) throws SQLException {
+        empDTO.setUsrID(usrId);
     }
 
     @Override
-    public void empMenu() throws IOException {
+    public void empMenu() throws IOException, SQLException, ClassNotFoundException {
 
         while (true) {
 
-            bw.write("\033[H\033[2J");
-            bw.flush();
-            bw.write("\n======================================================================\n");
-            bw.write("|\t\t\t임직원근태관리 근로자 메뉴\t\t\t     |\n");
-            bw.write("======================================================================\n");
-            bw.write("|\t    1. 출퇴근 기록\t\t   |\t        2. 인적사항\t     |\n");
-            bw.write("======================================================================\n");
-            bw.write("|\t\t원하는 기능을 선택하세요.(0번 : 종료)\t\t     |\n");
-            bw.write("======================================================================\n");
-            bw.flush();
+            BW.write("\033[H\033[2J");
+            BW.flush();
+            BW.write("\n======================================================================\n");
+            BW.write("|\t\t\t임직원근태관리 근로자 메뉴\t\t\t     |\n");
+            BW.write("======================================================================\n");
+            BW.write("|\t    1. 출퇴근 기록\t\t   |\t        2. 인적사항\t     |\n");
+            BW.write("======================================================================\n");
+            BW.write("|\t\t원하는 기능을 선택하세요.(0번 : 종료)\t\t     |\n");
+            BW.write("======================================================================\n");
+            BW.flush();
 
-            String menu = br.readLine().trim();
+            String menu = BR.readLine().trim();
 
             switch (menu) {
                 case "0":
-                    bw.write("홈 화면으로 돌아갑니다.\n");
-                    bw.flush();
+                    BW.write("홈 화면으로 돌아갑니다.\n");
+                    BW.flush();
                     return;
                 case "1":
                     // 출퇴근 확인
@@ -61,19 +57,51 @@ public class EmpServiceImpl implements EmpService {
                     // 휴가
                     break;
                 default:
-                    bw.write("잘못된 입력입니다.\n");
-                    bw.flush();
+                    BW.write("잘못된 입력입니다.\n");
+                    BW.flush();
                     break;
             }
         }
     }
 
     @Override
-    public void showEmpInfo() {
+    public void showEmpInfo() throws SQLException, ClassNotFoundException, IOException {
+
+        rs = stmt.executeQuery("SELECT * FROM EMP WHERE USRID = '" + empDTO.getUsrID() + "'");
+
+        while (rs.next()) {
+            empDTO.setName(rs.getString("NAME"));
+            empDTO.setBirthDate(rs.getDate("BIRTHDATE"));
+            empDTO.setGender(rs.getBoolean("GENDER"));
+            empDTO.setContact(rs.getString("CONTACT"));
+            empDTO.setHireDate(rs.getDate("HIREDATE"));
+            empDTO.setSal(rs.getLong("SAL"));
+            empDTO.setDeptCode(rs.getInt("DEPTCODE"));
+            empDTO.setPosCode(rs.getInt("POSCODE"));
+        }
 
         while (true) {
-
-            break;
+            BW.write("USRID: " + empDTO.getUsrID()
+                    + "\nNAME: " + empDTO.getName()
+                    + "\nBIRTHDATE: " + empDTO.getBirthDate()
+                    + "\nGENDER: " + (empDTO.isGender() ? "남" : "여")
+                    + "\nCONTACT: " + empDTO.getContact()
+                    + "\nHIREDATE: " + empDTO.getHireDate()
+                    + "\nSAL: " + empDTO.getSal()
+                    + "\nDEPTCODE: " + empDTO.getDeptCode()
+                    + "\nPOSCODE: " + empDTO.getPosCode() + "\n\n");
+            BW.write("메뉴 입력(0: 종료): ");
+            BW.flush();
+            String subMenu = BR.readLine().trim();
+            switch (subMenu) {
+                case "0":
+                    // 근로자 홈
+                    return;
+                case "1":
+                    break;
+                default:
+                    break;
+            }
         }
     }
 }
