@@ -16,8 +16,9 @@ public class HomeController {
 
     public void home(UsrDTO usrDTO) throws IOException, SQLException, ClassNotFoundException {
 
-        clearConsole();
-        BW.write(usrDTO + "님 환영합니다.\n");
+
+        BW.write(usrDTO.getUsrID() + "님 환영합니다.\n");
+
         BW.flush();
 
         while (true) {
@@ -56,7 +57,6 @@ public class HomeController {
 
     private void homeScreen() throws IOException {
 
-        clearConsole();
         BW.write("======================================================================\n");
         BW.write("|\t\t\t임직원근태관리 홈\t\t\t     |\n");
         BW.write("======================================================================\n");
@@ -64,11 +64,6 @@ public class HomeController {
         BW.write("======================================================================\n");
         BW.write("|\t\t원하는 기능을 선택하세요.(0번 : 종료)\t\t     |\n");
         BW.write("======================================================================\n");
-        BW.flush();
-    }
-
-    private void clearConsole() throws IOException {
-        BW.write("\033[H\033[2J");
         BW.flush();
     }
 }

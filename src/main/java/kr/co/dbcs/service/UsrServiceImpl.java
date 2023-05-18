@@ -1,5 +1,6 @@
 package kr.co.dbcs.service;
 
+
 import kr.co.dbcs.controller.HomeController;
 import kr.co.dbcs.domain.UsrDTO;
 import kr.co.dbcs.util.LoginSHA;
@@ -20,6 +21,7 @@ import static kr.co.dbcs.util.JdbcManager.*;
 public class UsrServiceImpl implements UsrService {
 
     private final Connection conn = MANAGER.getConnection();
+
     private PreparedStatement pstmtInsert, pstmtSelect;
     private ResultSet rs;
 
@@ -36,8 +38,6 @@ public class UsrServiceImpl implements UsrService {
 
         while (true) {
 
-            BW.write("\033[H\033[2J");
-            BW.flush();
             BW.write("\n======================================================================\n");
             BW.write("|\t\t\t임직원근태관리 시스템\t\t\t     |\n");
             BW.write("======================================================================\n");
@@ -97,7 +97,11 @@ public class UsrServiceImpl implements UsrService {
                 usr.setLoginType(rs.getBoolean(3));
                 list.add(usr);
             }
-            dataId = list.get(0).getUsrID();
+            if(list.size() == 0) {
+            	dataId = null;
+            } else {
+            	dataId = list.get(0).getUsrID();
+            }
 
             if (!Validation.ValidateId(cId)) {
                 BW.write("아이디는 영문 대소문자, 숫자 1자 이상으로 5자 ~ 11자 사이에서 만들 수 있습니다.\n");

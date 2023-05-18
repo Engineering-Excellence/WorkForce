@@ -19,6 +19,12 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public void adminMenu() {
-
+    	
     }
+
+	@Override
+	public void showAdminInfo() {
+		
+	}
+    
 }
