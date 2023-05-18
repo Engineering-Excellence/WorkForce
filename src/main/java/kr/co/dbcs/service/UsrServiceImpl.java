@@ -1,6 +1,5 @@
 package kr.co.dbcs.service;
 
-
 import kr.co.dbcs.controller.HomeController;
 import kr.co.dbcs.domain.UsrDTO;
 import kr.co.dbcs.util.LoginSHA;
@@ -21,7 +20,6 @@ import static kr.co.dbcs.util.JdbcManager.*;
 public class UsrServiceImpl implements UsrService {
 
     private final Connection conn = MANAGER.getConnection();
-
     private PreparedStatement pstmtInsert, pstmtSelect;
     private ResultSet rs;
 
@@ -97,10 +95,10 @@ public class UsrServiceImpl implements UsrService {
                 usr.setLoginType(rs.getBoolean(3));
                 list.add(usr);
             }
-            if(list.size() == 0) {
-            	dataId = null;
+            if (list.isEmpty()) {
+                dataId = null;
             } else {
-            	dataId = list.get(0).getUsrID();
+                dataId = list.get(0).getUsrID();
             }
 
             if (!Validation.ValidateId(cId)) {
