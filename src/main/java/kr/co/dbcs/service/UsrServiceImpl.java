@@ -1,8 +1,11 @@
 package kr.co.dbcs.service;
 
-import static kr.co.dbcs.util.JdbcManager.BR;
-import static kr.co.dbcs.util.JdbcManager.BW;
-import static kr.co.dbcs.util.JdbcManager.MANAGER;
+
+import kr.co.dbcs.controller.HomeController;
+import kr.co.dbcs.domain.UsrDTO;
+import kr.co.dbcs.util.LoginSHA;
+import kr.co.dbcs.util.Validation;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
@@ -12,16 +15,13 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-import kr.co.dbcs.controller.HomeController;
-import kr.co.dbcs.domain.UsrDTO;
-import kr.co.dbcs.util.LoginSHA;
-import kr.co.dbcs.util.Validation;
-import lombok.extern.slf4j.Slf4j;
+import static kr.co.dbcs.util.JdbcManager.*;
 
 @Slf4j
 public class UsrServiceImpl implements UsrService {
 
-	private final Connection conn = MANAGER.getConnection();
+    private final Connection conn = MANAGER.getConnection();
+
     private PreparedStatement pstmtInsert, pstmtSelect;
     private ResultSet rs;
 
@@ -30,9 +30,9 @@ public class UsrServiceImpl implements UsrService {
     private final String CHECK_ID = "SELECT * FROM USR WHERE USRID = ?";
     private String salt;
 
-    public UsrServiceImpl() throws SQLException, ClassNotFoundException {
+    public UsrServiceImpl() throws SQLException {
     }
-    
+
     @Override
     public void start() throws SQLException, IOException, NoSuchAlgorithmException, ClassNotFoundException {
 
@@ -58,7 +58,7 @@ public class UsrServiceImpl implements UsrService {
                     signUp();
                     break;
                 case 2:
-                    
+
                     new HomeController().home(signIn());
                     return;
                 default:
@@ -80,7 +80,6 @@ public class UsrServiceImpl implements UsrService {
         String id = null;
         String pw = null;
 
-
         while (true) {
             BW.write("생성하실 ID를 입력해 주시길 바랍니다.");
             BW.flush();
@@ -92,11 +91,11 @@ public class UsrServiceImpl implements UsrService {
             String dataId = null;
             ArrayList<UsrDTO> list = new ArrayList<>();
             while (rs.next()) {
-            	UsrDTO usr = new UsrDTO();
-            	usr.setUsrID(rs.getString(1));
-            	usr.setPw(rs.getString(2));
-            	usr.setLoginType(rs.getBoolean(3));
-            	list.add(usr);
+                UsrDTO usr = new UsrDTO();
+                usr.setUsrID(rs.getString(1));
+                usr.setPw(rs.getString(2));
+                usr.setLoginType(rs.getBoolean(3));
+                list.add(usr);
             }
             if(list.size() == 0) {
             	dataId = null;
@@ -232,9 +231,9 @@ public class UsrServiceImpl implements UsrService {
             }
             String dataId = list.get(0).getUsrID();
             String dataPw = list.get(0).getPw();
-            
+
             dataId.split(" ");
-            
+
             salt = LoginSHA.Salt();
             String pw_decrypt = LoginSHA.SHA512(pw, salt);
 
@@ -243,6 +242,7 @@ public class UsrServiceImpl implements UsrService {
                     BW.write("로그인 성공\n");
                     BW.flush();
                     return list.get(0);
+
                 } else {
                     BW.write("ID 와 비밀번호가 다릅니다. 확인 후 다시 시도하시길 바랍니다.\n");
                     BW.flush();
