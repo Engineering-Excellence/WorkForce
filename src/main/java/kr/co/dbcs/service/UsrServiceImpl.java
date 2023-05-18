@@ -45,7 +45,7 @@ public class UsrServiceImpl implements UsrService {
             BW.write("======================================================================\n");
             BW.flush();
 
-            int menu = Integer.parseInt(BR.readLine());
+            int menu = Integer.parseInt(BR.readLine().trim());
 
             switch (menu) {
                 case 0:
@@ -60,7 +60,7 @@ public class UsrServiceImpl implements UsrService {
                     new HomeController().home(signIn());
                     return;
                 default:
-                    BW.write("1, 2, 3번 중 번호를 입력해주시길 바랍니다.\n");
+                    BW.write("0, 1, 2, 3번 중 번호를 입력해주시길 바랍니다.\n");
                     BW.flush();
                     break;
             }
