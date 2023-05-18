@@ -24,42 +24,45 @@ public class UsrServiceImpl implements UsrService {
     private ResultSet rs;
     private PreparedStatement pstmtInsert, pstmtSelect;
 
-    private String signUp = "INSERT INTO USR VALUES(?, ?, 0)";
-    private String userInsert = "INSERT INTO EMP VALUES(?, ?, ?, ?, ?, TO_CHAR(SYSDATE, 'YYYY-MM-DD'), 0, 100, 100)";
-    private String checkId = "SELECT USRID FROM USR WHERE USRID = ?";
-    private String checkPw = "SELECT PW FROM USR WHERE USRID = ?";
+    private final String signUp = "INSERT INTO USR VALUES(?, ?, 0)";
+    private final String userInsert = "INSERT INTO EMP VALUES(?, ?, ?, ?, ?, TO_CHAR(SYSDATE, 'YYYY-MM-DD'), 0, 100, 100)";
+    private final String checkId = "SELECT USRID FROM USR WHERE USRID = ?";
+    private final String checkPw = "SELECT PW FROM USR WHERE USRID = ?";
     private String salt;
 
     public UsrServiceImpl() throws SQLException, ClassNotFoundException {
     }
 
     @Override
-    public void start() throws SQLException, IOException, NoSuchAlgorithmException {
+    public void start() throws SQLException, IOException, NoSuchAlgorithmException, ClassNotFoundException {
 
         while (true) {
 
-            bw.write("======================================================================\n");
+            bw.write("\033[H\033[2J");
+            bw.flush();
+            bw.write("\n======================================================================\n");
             bw.write("|\t\t\t임직원근태관리 시스템\t\t\t     |\n");
             bw.write("======================================================================\n");
             bw.write("|\t    1. 회원가입\t\t   |\t        2. 로그인\t     |\n");
             bw.write("======================================================================\n");
-            bw.write("|\t\t원하는 기능을 선택하세요.(3번 : 종료)\t\t     |\n");
+            bw.write("|\t\t원하는 기능을 선택하세요.(0번 : 종료)\t\t     |\n");
             bw.write("======================================================================\n");
             bw.flush();
 
-            int num = Integer.parseInt(br.readLine());
+            int menu = Integer.parseInt(br.readLine());
 
-            switch (num) {
+            switch (menu) {
+                case 0:
+                    bw.write("프로그램을 종료합니다.\n");
+                    bw.flush();
+                    return;
                 case 1:
                     signUp();
                     break;
                 case 2:
                     String userId = signIn();
-                    HomeController.menu(userId);
+                    new HomeController().home(userId);
                     return;
-                case 3:
-                    System.exit(0);
-                    break;
                 default:
                     bw.write("1, 2, 3번 중 번호를 입력해주시길 바랍니다.\n");
                     bw.flush();
@@ -134,6 +137,7 @@ public class UsrServiceImpl implements UsrService {
 
     @Override
     public void input(String id) throws IOException, SQLException {
+
         pstmtInsert = conn.prepareStatement(userInsert);
 
         bw.write("개인 인적사항을 입력해주시길 바랍니다.\n");
@@ -193,10 +197,14 @@ public class UsrServiceImpl implements UsrService {
 
     @Override
     public String signIn() throws IOException, SQLException, NoSuchAlgorithmException {
+
         while (true) {
             bw.write("ID : ");
             bw.flush();
             String id = br.readLine();
+            if (id.equalsIgnoreCase("exit")) {
+                System.exit(0);
+            }
             bw.write("PW : ");
             bw.flush();
             String pw = br.readLine();

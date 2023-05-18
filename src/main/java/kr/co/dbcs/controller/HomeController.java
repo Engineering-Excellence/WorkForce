@@ -1,11 +1,14 @@
 package kr.co.dbcs.controller;
 
+import kr.co.dbcs.service.AdminServiceImpl;
+import kr.co.dbcs.service.EmpServiceImpl;
 import kr.co.dbcs.util.JdbcManager;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.sql.SQLException;
 
 @Slf4j
 public class HomeController {
@@ -13,9 +16,7 @@ public class HomeController {
     private static final BufferedReader br = JdbcManager.BR;
     private static final BufferedWriter bw = JdbcManager.BW;
 
-    public static void menu(String usrId) throws IOException {
-
-        if (usrId.equals("exit")) return;
+    public void home(String usrId) throws IOException, SQLException, ClassNotFoundException {
 
         clearConsole();
         bw.write(usrId + "님 환영합니다.\n");
@@ -23,7 +24,7 @@ public class HomeController {
 
         while (true) {
             bw.write("\n");
-            info();
+            homeScreen();
             String menu = br.readLine().trim();
             switch (menu) {
                 case "0":
@@ -31,24 +32,21 @@ public class HomeController {
                     bw.flush();
                     return;
                 case "1":
-                    bw.write("1번 메뉴\n");
-                    bw.flush();
+                    // 근로자
+                    new EmpServiceImpl().empMenu();
                     break;
                 case "2":
-                    bw.write("2번 메뉴\n");
-                    bw.flush();
+                    // 관리자
+                    new AdminServiceImpl().adminMenu();
                     break;
                 case "3":
-                    bw.write("3번 메뉴\n");
-                    bw.flush();
+                    // 서비스 메서드
                     break;
                 case "4":
-                    bw.write("4번 메뉴\n");
-                    bw.flush();
+                    // 서비스 메서드
                     break;
                 case "5":
-                    bw.write("5번 메뉴\n");
-                    bw.flush();
+                    // 서비스 메서드
                     break;
                 default:
                     bw.write("잘못된 입력입니다.\n");
@@ -58,20 +56,20 @@ public class HomeController {
         }
     }
 
-    private static void info() throws IOException {
+    private void homeScreen() throws IOException {
 
         clearConsole();
-        bw.write("-=-=-=-=-= M E N U =-=-=-=-=-\n" +
-                "\t1. 메뉴\n" +
-                "\t2. 메뉴\n" +
-                "\t3. 메뉴\n" +
-                "\t4. 메뉴\n" +
-                "\t0. 메뉴\n" +
-                "\n원하는 메뉴를 선택하세요: ");
+        bw.write("======================================================================\n");
+        bw.write("|\t\t\t임직원근태관리 홈\t\t\t     |\n");
+        bw.write("======================================================================\n");
+        bw.write("|\t    1. 근로자\t\t   |\t        2. 관리자\t     |\n");
+        bw.write("======================================================================\n");
+        bw.write("|\t\t원하는 기능을 선택하세요.(0번 : 종료)\t\t     |\n");
+        bw.write("======================================================================\n");
         bw.flush();
     }
 
-    private static void clearConsole() throws IOException {
+    private void clearConsole() throws IOException {
         bw.write("\033[H\033[2J");
         bw.flush();
     }
