@@ -1,19 +1,26 @@
 package kr.co.dbcs.view;
 
-import junit.framework.TestCase;
 import kr.co.dbcs.util.JdbcManager;
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
+import java.sql.Connection;
 import java.sql.SQLException;
 
-public class JdbcTest extends TestCase {
+public class JdbcTest {
 
-    private static final JdbcManager MANAGER = JdbcManager.getInstance();
+    private static JdbcManager MANAGER;
 
-    public void testMain() throws SQLException, ClassNotFoundException {
+    @BeforeClass    // 테스트 초기화
+    public static void setup() {
+        MANAGER = JdbcManager.getInstance();
+    }
 
-        // JDBC Test
-        MANAGER.getConnection();
-        boolean isConnected = !MANAGER.getConnection().isClosed();
-        assertTrue("Connection FAIL", isConnected);
+    @Test
+    public void testConnection() throws SQLException {
+        Connection connection = MANAGER.getConnection();
+        boolean isConnected = !connection.isClosed();
+        Assert.assertTrue("Connection FAIL", isConnected);  // 연결이 성공적인지 확인
     }
 }

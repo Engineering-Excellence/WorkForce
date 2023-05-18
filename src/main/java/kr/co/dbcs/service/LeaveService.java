@@ -7,13 +7,11 @@ public interface LeaveService {
 
     void leaveMenu() throws IOException, ClassNotFoundException, SQLException;
 
-	void leaveInsert() throws IOException, SQLException;
-	
-	void leaveSelect();
-	
-	void leaveDelete();
-	
-	void leaveupdate();
-	
+    void leaveInsert() throws IOException, SQLException;
 
+    void leaveSelect();
+
+    void leaveDelete();
+
+    void leaveupdate();
 }
