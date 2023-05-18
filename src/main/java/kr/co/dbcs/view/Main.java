@@ -9,9 +9,12 @@ import java.sql.SQLException;
 
 public class Main {
 
+    private static final JdbcManager MANAGER = JdbcManager.getInstance();
+
     public static void main(String[] args) throws ClassNotFoundException, IOException, SQLException, NoSuchAlgorithmException {
 
+        MANAGER.getConnection();
         new UsrServiceImpl().start();
-        JdbcManager.getInstance().closeConnection();
+        MANAGER.closeConnection();
     }
 }

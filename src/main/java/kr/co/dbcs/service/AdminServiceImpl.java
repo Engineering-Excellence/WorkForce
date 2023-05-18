@@ -1,23 +1,20 @@
 package kr.co.dbcs.service;
 
-import kr.co.dbcs.util.JdbcManager;
 import lombok.extern.slf4j.Slf4j;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
+
+import static kr.co.dbcs.util.JdbcManager.MANAGER;
 
 @Slf4j
 public class AdminServiceImpl implements AdminService {
 
-    private static final BufferedReader br = JdbcManager.BR;
-    private static final BufferedWriter bw = JdbcManager.BW;
-    private Connection conn = JdbcManager.getInstance().getConnection();
+    private final Connection conn = MANAGER.getConnection();
+    private final Statement stmt = MANAGER.getStatement();
+    private PreparedStatement pstmt;
     private ResultSet rs;
 
-    public AdminServiceImpl() throws SQLException, ClassNotFoundException {
+    public AdminServiceImpl() throws SQLException {
     }
 
     @Override

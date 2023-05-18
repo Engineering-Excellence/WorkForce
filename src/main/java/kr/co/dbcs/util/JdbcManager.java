@@ -1,6 +1,7 @@
 package kr.co.dbcs.util;
 
 import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -11,6 +12,7 @@ import java.io.OutputStreamWriter;
 import java.sql.*;
 
 @Slf4j
+@Getter
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class JdbcManager {
 
@@ -25,46 +27,52 @@ public class JdbcManager {
     public static final BufferedWriter BW = new BufferedWriter(new OutputStreamWriter(System.out));
 
     private static final JdbcManager INSTANCE = new JdbcManager();
-    public static Connection conn;
-    public static Statement stmt;
-    public static PreparedStatement pstmt;
-    public static ResultSet rs;
+    private static Connection connection;
+    private static Statement statement;
+    private static PreparedStatement preparedStatement;
+    private static ResultSet resultSet;
+
+    public static final JdbcManager MANAGER = JdbcManager.getInstance();
 
     public static JdbcManager getInstance() {
-
         return INSTANCE;
     }
 
-    public synchronized Connection getConnection() throws ClassNotFoundException, SQLException {
-        initializeConnection();
-        return conn;
+    public synchronized Connection getConnection() throws SQLException {
+        if (connection == null || connection.isClosed()) {
+            connection = DriverManager.getConnection(URL, USERNAME, PASSWORD);
+            log.info("CONN SUCCESS");
+        }
+        return connection;
     }
 
-    private void initializeConnection() throws ClassNotFoundException, SQLException {
-        Class.forName(DRIVER);
-        conn = DriverManager.getConnection(URL, USERNAME, PASSWORD);
-        stmt = conn.createStatement();
-        log.info("CONN SUCCESS");
+    public synchronized Statement getStatement() throws SQLException {
+        if (statement == null || statement.isClosed()) statement = connection.createStatement();
+        return statement;
+    }
+
+    public synchronized ResultSet getResultSet() {
+        return resultSet;
     }
 
     public synchronized void closeConnection() throws SQLException {
-        if (rs != null && !rs.isClosed()) {
-            rs.close();
+        if (resultSet != null && !resultSet.isClosed()) {
+            resultSet.close();
             log.info("RS CLOSE");
         }
 
-        if (stmt != null && !stmt.isClosed()) {
-            stmt.close();
+        if (statement != null && !statement.isClosed()) {
+            statement.close();
             log.info("STMT CLOSE");
         }
 
-        if (pstmt != null && !pstmt.isClosed()) {
-            pstmt.close();
+        if (preparedStatement != null && !preparedStatement.isClosed()) {
+            preparedStatement.close();
             log.info("PSTMT CLOSE");
         }
 
-        if (conn != null && !conn.isClosed()) {
-            conn.close();
+        if (connection != null && !connection.isClosed()) {
+            connection.close();
             log.info("CONN CLOSE");
         }
     }
