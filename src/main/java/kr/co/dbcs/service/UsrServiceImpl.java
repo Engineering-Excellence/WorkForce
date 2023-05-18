@@ -161,7 +161,6 @@ public class UsrServiceImpl implements UsrService {
             if (!Validation.ValidateDate(birthday)) {
                 BW.write("1900-11-22 형식으로 입력 바랍니다.\n");
                 BW.flush();
-                continue;
             } else {
                 break;
             }
@@ -244,12 +243,10 @@ public class UsrServiceImpl implements UsrService {
                 } else {
                     BW.write("ID 와 비밀번호가 다릅니다. 확인 후 다시 시도하시길 바랍니다.\n");
                     BW.flush();
-                    continue;
                 }
             } else {
                 BW.write("ID 와 비밀번호가 다릅니다. 확인 후 다시 시도하시길 바랍니다.\n");
                 BW.flush();
-                continue;
             }
         }
     }
