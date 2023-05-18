@@ -11,5 +11,5 @@ public class LeaveDTO { // 휴가 테이블
     private String reason;  // 사유
     private byte apvStat;   // 승인 여부
     private String usrID;  // FK, 사용자 ID
-    private long leaveTypeID;
+    private int leaveTypeID;   // FK, 휴가종류 ID
 }

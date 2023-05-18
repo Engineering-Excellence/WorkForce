@@ -69,7 +69,7 @@ public class EmpServiceImpl implements EmpService {
     }
 
     @Override
-    public void showEmpInfo() throws SQLException, ClassNotFoundException, IOException {
+    public void showEmpInfo() throws SQLException, IOException {
 
         rs = stmt.executeQuery("SELECT * FROM EMP WHERE USRID = '" + empDTO.getUsrID() + "'");
 
