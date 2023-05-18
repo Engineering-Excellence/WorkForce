@@ -3,9 +3,9 @@ package kr.co.dbcs.domain;
 import lombok.Data;
 
 @Data
-public class AttRecordDTO { // 출퇴근기록 테이블
+public class AttDTO { // 출퇴근기록 테이블
 
-    private long recordID;  // PK, 출퇴근기록 ID
+    private long attID;  // PK, 출퇴근기록 ID
     private java.sql.Date attDate; // 날짜
     private java.sql.Timestamp startTime;   // 출근시각
     private java.sql.Timestamp endTime; // 퇴근시각

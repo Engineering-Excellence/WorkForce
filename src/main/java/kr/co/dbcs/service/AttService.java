@@ -3,9 +3,9 @@ package kr.co.dbcs.service;
 import java.io.IOException;
 import java.sql.SQLException;
 
-public interface AttRecordService {
+public interface AttService {
 
-	void attRecordMenu() throws IOException, SQLException;
+	void attMenu() throws IOException, SQLException;
 
 	public void goWork() throws SQLException, IOException;
 
