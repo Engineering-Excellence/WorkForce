@@ -32,7 +32,7 @@ public class UsrServiceImpl implements UsrService {
 
     public UsrServiceImpl() throws SQLException, ClassNotFoundException {
     }
-
+    
     @Override
     public void start() throws SQLException, IOException, NoSuchAlgorithmException {
 
@@ -43,7 +43,7 @@ public class UsrServiceImpl implements UsrService {
             bw.write("======================================================================\n");
             bw.write("|\t    1. 회원가입\t\t   |\t        2. 로그인\t     |\n");
             bw.write("======================================================================\n");
-            bw.write("|\t\t원하는 기능을 선택하세요.(3번 : 종료)\t\t     |\n");
+            bw.write("|\t\t원하는 기능을 선택하세요.(0번 : 종료)\t\t     |\n");
             bw.write("======================================================================\n");
             bw.flush();
 
@@ -54,7 +54,7 @@ public class UsrServiceImpl implements UsrService {
             } else if (num == 2) {
                 String userId = signIn();
                 HomeController.menu(userId);
-            } else if (num == 3) { // 종료
+            } else if (num == 0) { // 종료
                 System.exit(0);
             } else {
                 bw.write("1번과 2번 중 번호를 입력해주시길 바랍니다.\n");
@@ -144,7 +144,7 @@ public class UsrServiceImpl implements UsrService {
         while (true) {
             birthday = br.readLine();
 
-            if (!Validation.ValidateBirth(birthday)) {
+            if (!Validation.ValidateDate(birthday)) {
                 bw.write("1900-11-22 형식으로 입력 바랍니다.\n");
                 bw.flush();
                 continue;

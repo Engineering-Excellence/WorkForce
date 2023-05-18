@@ -34,7 +34,7 @@ public class Validation {
 		}
 	}
 	
-	public static boolean ValidateBirth(String birth) {
+	public static boolean ValidateDate(String birth) {
 		
 		Pattern p1 = Pattern.compile(regExp_birth);
 
