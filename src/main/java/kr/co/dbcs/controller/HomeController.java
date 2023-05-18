@@ -1,5 +1,6 @@
 package kr.co.dbcs.controller;
 
+import kr.co.dbcs.domain.EmpDTO;
 import kr.co.dbcs.service.AdminServiceImpl;
 import kr.co.dbcs.service.EmpServiceImpl;
 import kr.co.dbcs.util.JdbcManager;
@@ -21,6 +22,11 @@ public class HomeController {
         clearConsole();
         bw.write(usrId + "님 환영합니다.\n");
         bw.flush();
+
+        EmpDTO empDTO = new EmpDTO();
+        empDTO.setUsrID(usrId);
+
+        EmpServiceImpl empService = new EmpServiceImpl();
 
         while (true) {
             bw.write("\n");
