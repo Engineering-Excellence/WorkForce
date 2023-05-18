@@ -16,9 +16,7 @@ public class HomeController {
 
     public void home(UsrDTO usrDTO) throws IOException, SQLException, ClassNotFoundException {
 
-
         BW.write(usrDTO.getUsrID() + "님 환영합니다.\n");
-
         BW.flush();
 
         while (true) {

@@ -11,5 +11,8 @@ CREATE TABLE leave
     apvstat     NUMBER(4)    NOT NULL,
     usrid       VARCHAR2(20) NOT NULL
         CONSTRAINT leave_usr_usrid_fk
-            REFERENCES usr (usrid)
+            REFERENCES usr (usrid),
+    leavetypeid NUMBER       NOT NULL
+        CONSTRAINT leave_leavetype_leavetypeid_fk
+            REFERENCES leavetype (leavetypeid)
 );
