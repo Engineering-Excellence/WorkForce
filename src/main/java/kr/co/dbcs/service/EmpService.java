@@ -7,5 +7,5 @@ public interface EmpService {
 
     void empMenu() throws IOException, SQLException, ClassNotFoundException;
     void showEmpInfo() throws SQLException, ClassNotFoundException, IOException;
-
+    void updateEmpInfo() throws SQLException, ClassNotFoundException, IOException;
 }
