@@ -12,5 +12,6 @@ public class EmpDTO {   // 직원 테이블
     String contact; // 연락처
     java.sql.Date hireDate; // 입사일
     long sal;   // 기본급
-    short leaveDay; // 잔여 휴가
+    int posCode;    // FK, 직급코드
+    int deptCode;   // FK, 부서코드
 }

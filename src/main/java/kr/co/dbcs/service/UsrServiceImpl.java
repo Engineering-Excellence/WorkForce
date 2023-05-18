@@ -1,6 +1,7 @@
 package kr.co.dbcs.service;
 
 import kr.co.dbcs.controller.HomeController;
+import kr.co.dbcs.domain.UsrDTO;
 import kr.co.dbcs.util.JdbcManager;
 import kr.co.dbcs.util.LoginSHA;
 import kr.co.dbcs.util.Validation;
@@ -14,6 +15,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 @Slf4j
 public class UsrServiceImpl implements UsrService {
@@ -26,8 +28,7 @@ public class UsrServiceImpl implements UsrService {
 
     private final String signUp = "INSERT INTO USR VALUES(?, ?, 0)";
     private final String userInsert = "INSERT INTO EMP VALUES(?, ?, ?, ?, ?, TO_CHAR(SYSDATE, 'YYYY-MM-DD'), 0, 100, 100)";
-    private final String checkId = "SELECT USRID FROM USR WHERE USRID = ?";
-    private final String checkPw = "SELECT PW FROM USR WHERE USRID = ?";
+    private final String checkId = "SELECT * FROM USR WHERE USRID = ?";
     private String salt;
 
     public UsrServiceImpl() throws SQLException, ClassNotFoundException {
@@ -214,20 +215,17 @@ public class UsrServiceImpl implements UsrService {
             pstmtSelect.setString(1, id);
             rs = pstmtSelect.executeQuery();
 
-            String dataId = null;
+            ArrayList<UsrDTO> list = new ArrayList<>();
             while (rs.next()) {
-                dataId = rs.getString(1);
+                UsrDTO usr = new UsrDTO();
+                usr.setUsrID(rs.getString("usrID"));
+                usr.setPw(rs.getString("pw"));
+                usr.setLoginType(rs.getBoolean("loginType"));
+                list.add(usr);
             }
-
-            pstmtSelect = conn.prepareStatement(checkPw);
-
-            pstmtSelect.setString(1, id);
-            rs = pstmtSelect.executeQuery();
-            String dataPw = null;
-            while (rs.next()) {
-                dataPw = rs.getString("pw");
-            }
-
+            String dataId = list.get(0).getUsrID();
+            String dataPw = list.get(0).getPw();
+            
             salt = LoginSHA.Salt();
             String pw_decrypt = LoginSHA.SHA512(pw, salt);
 
