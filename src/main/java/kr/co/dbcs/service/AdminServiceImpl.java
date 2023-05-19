@@ -52,6 +52,7 @@ public class AdminServiceImpl implements AdminService {
                 break;
             case "6":
                 // 직급관리
+            	new PosServiceImpl().posStart();
                 break;
             default:
                 BW.write("잘못된 입력입니다.\n"); 
