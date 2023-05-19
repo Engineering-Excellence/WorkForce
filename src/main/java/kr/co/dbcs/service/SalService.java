@@ -9,5 +9,5 @@ public interface SalService {
 	void showMenu() throws IOException;
 	void salStart() throws IOException, SQLException, ParseException;
 	void changeSalDate() throws SQLException, IOException, ParseException;
-	void paySal();
+	void paySal() throws SQLException, IOException;
 }
