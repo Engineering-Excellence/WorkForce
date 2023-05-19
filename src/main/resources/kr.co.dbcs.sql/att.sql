@@ -6,8 +6,8 @@ CREATE TABLE att
         CONSTRAINT att_pk
             PRIMARY KEY,
     attdate   DATE         NOT NULL,
-    starttime TIMESTAMP    NOT NULL,
-    endtime   TIMESTAMP,
+    starttime TIMESTAMP DEFAULT TO_CHAR(sysDate,'yyyy-mm-dd'),
+    endtime   TIMESTAMP DEFAULT TO_CHAR(sysDate,'yyyy-mm-dd'),
     usrid     VARCHAR2(20) Not Null
         CONSTRAINT att_usr_usrid_fk
             REFERENCES usr (usrid),
