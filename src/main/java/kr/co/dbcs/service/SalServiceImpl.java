@@ -8,11 +8,13 @@ import java.util.ArrayList;
 
 import kr.co.dbcs.domain.EmpDTO;
 import kr.co.dbcs.domain.SalDTO;
+import lombok.extern.slf4j.Slf4j;
 
 import static kr.co.dbcs.util.JdbcManager.BR;
 import static kr.co.dbcs.util.JdbcManager.BW;
 import static kr.co.dbcs.util.JdbcManager.MANAGER;
 
+@Slf4j
 public class SalServiceImpl implements SalService {
 	private final Connection conn = MANAGER.getConnection();
 	private final Statement stmt = MANAGER.getStatement();
@@ -89,7 +91,7 @@ public class SalServiceImpl implements SalService {
 
 	@Override
 	public void paySal() throws SQLException, IOException {
-		String sqlSearchAll = "SELECT USRID, SAL FROM EMP";
+		String sqlSearchAll = "SELECT USRID, SAL, DEPTCODE FROM EMP";
 		String sqlSearchDate = "SELECT PAYDATE FROM SAL WHERE ROWNUM = 1 ORDER BY SALID DESC";
 		rs = stmt.executeQuery(sqlSearchAll);
 		
@@ -98,6 +100,7 @@ public class SalServiceImpl implements SalService {
 			EmpDTO emp = new EmpDTO();
 			emp.setUsrID(rs.getString("USRID"));
 			emp.setSal(rs.getInt("SAL"));
+			emp.setDeptCode(rs.getInt("DEPTCODE"));
 			list.add(emp);
 		}
 		
@@ -117,7 +120,11 @@ public class SalServiceImpl implements SalService {
 		for (int i = 0; i < list.size(); i++) {
 			pstmt = conn.prepareStatement(sqlInsert);
 			pstmt.setString(1, str);
-			pstmt.setLong(2, list.get(i).getSal());
+			if(list.get(i).getDeptCode() == 50 || list.get(i).getDeptCode() == 60 || list.get(i).getDeptCode() == 70) {
+				pstmt.setLong(2, Math.round(list.get(i).getSal() * 1.2));
+			} else {
+				pstmt.setLong(2, list.get(i).getSal());
+			}
 			pstmt.setString(3, list.get(i).getUsrID());
 			pstmt.executeUpdate();
 		}
