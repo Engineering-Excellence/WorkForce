@@ -12,6 +12,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.ParseException;
 import java.util.ArrayList;
 
 import static kr.co.dbcs.util.JdbcManager.*;
@@ -32,31 +33,23 @@ public class UsrServiceImpl implements UsrService {
     }
 
     @Override
-    public void start() throws SQLException, IOException, NoSuchAlgorithmException, ClassNotFoundException {
+    public void start() throws SQLException, IOException, NoSuchAlgorithmException, ClassNotFoundException, ParseException {
 
         while (true) {
 
-            BW.write("\n======================================================================\n");
-            BW.write("|\t\t\t임직원근태관리 시스템\t\t\t     |\n");
-            BW.write("======================================================================\n");
-            BW.write("|\t    1. 회원가입\t\t   |\t        2. 로그인\t     |\n");
-            BW.write("======================================================================\n");
-            BW.write("|\t\t원하는 기능을 선택하세요.(0번 : 종료)\t\t     |\n");
-            BW.write("======================================================================\n");
-            BW.flush();
+            showMenu();
 
-            int menu = Integer.parseInt(BR.readLine().trim());
+            String menu = BR.readLine().trim();
 
             switch (menu) {
-                case 0:
+                case "0":
                     BW.write("프로그램을 종료합니다.\n");
                     BW.flush();
                     return;
-                case 1:
+                case "1":
                     signUp();
                     break;
-                case 2:
-
+                case "2":
                     new HomeController().home(signIn());
                     return;
                 default:
@@ -161,7 +154,6 @@ public class UsrServiceImpl implements UsrService {
             if (!Validation.ValidateDate(birthday)) {
                 BW.write("1900-11-22 형식으로 입력 바랍니다.\n");
                 BW.flush();
-                continue;
             } else {
                 break;
             }
@@ -244,13 +236,23 @@ public class UsrServiceImpl implements UsrService {
                 } else {
                     BW.write("ID 와 비밀번호가 다릅니다. 확인 후 다시 시도하시길 바랍니다.\n");
                     BW.flush();
-                    continue;
                 }
             } else {
                 BW.write("ID 와 비밀번호가 다릅니다. 확인 후 다시 시도하시길 바랍니다.\n");
                 BW.flush();
-                continue;
             }
         }
     }
+
+	@Override
+	public void showMenu() throws IOException {
+		BW.write("\n======================================================================\n");
+        BW.write("|\t\t\t임직원근태관리 시스템\t\t\t     |\n");
+        BW.write("======================================================================\n");
+        BW.write("|\t    1. 회원가입\t\t   |\t        2. 로그인\t     |\n");
+        BW.write("======================================================================\n");
+        BW.write("|\t\t원하는 기능을 선택하세요.(0번 : 종료)\t\t     |\n");
+        BW.write("======================================================================\n");
+        BW.flush();
+	}
 }

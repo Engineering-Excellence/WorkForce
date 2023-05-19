@@ -1,27 +1,29 @@
 package kr.co.dbcs.service;
 
-import lombok.extern.slf4j.Slf4j;
+
 import static kr.co.dbcs.util.JdbcManager.BR;
 import static kr.co.dbcs.util.JdbcManager.BW;
 import static kr.co.dbcs.util.JdbcManager.MANAGER;
 
-import kr.co.dbcs.domain.AttDTO;
-import kr.co.dbcs.domain.LeaveDTO;
-import kr.co.dbcs.util.Validation;
-
-import java.sql.*;
-import java.util.ArrayList;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+
+import kr.co.dbcs.util.Validation;
+import lombok.extern.slf4j.Slf4j;
+
 
 @Slf4j
 public class LeaveServiceImpl implements LeaveService {
 
-	private final Connection conn = MANAGER.getConnection();
-	private final Statement stmt = MANAGER.getStatement();
-	private PreparedStatement pstmt;
-	private ResultSet rs;
+    private final Connection conn = MANAGER.getConnection();
+    private final Statement stmt = MANAGER.getStatement();
+    private PreparedStatement pstmt;
+    private ResultSet rs;
+
 
 	private static String usrID = "jaejin1112";
 
@@ -30,13 +32,14 @@ public class LeaveServiceImpl implements LeaveService {
 	String leaveUpdate = "UPDATE LEAVE SET APVSTAT WHERE USRID = ?";
 	String leaveDelete = "DELETE FROM LEAVE WHERE LEAVEID = ?";
 
-	public LeaveServiceImpl() throws ClassNotFoundException, SQLException {
 
-	}
+    public LeaveServiceImpl() throws ClassNotFoundException, SQLException {
 
-	@Override
-	public void leaveMenu() throws IOException, ClassNotFoundException, SQLException {
-		while (true) {
+    }
+
+    @Override
+    public void leaveMenu() throws IOException, ClassNotFoundException, SQLException {
+
 
 			BW.flush();
 			BW.write("\n======================================================================\n");
@@ -48,7 +51,10 @@ public class LeaveServiceImpl implements LeaveService {
 			BW.write("======================================================================\n");
 			BW.flush();
 
+			
 			String menu = BR.readLine().trim();
+			
+        while (true) {
 
 			switch (menu) {
 			case "0":
@@ -69,63 +75,65 @@ public class LeaveServiceImpl implements LeaveService {
 				// 휴가삭제
 				new LeaveServiceImpl().leaveDelete();
 				break;
-
-			default:
-				BW.write("잘못된 입력입니다.\n");
-				BW.flush();
-				break;
+				}
 			}
-		}
-	}
+        }
+    @Override
+    public void leaveInsert() throws IOException, SQLException {
 
-	@Override
-	public void leaveInsert() throws IOException, SQLException {
+        pstmt = conn.prepareStatement(leaveInsert);
 
-		pstmt = conn.prepareStatement(leaveInsert);
 
-		BW.write("휴가시작일 : \n");
-		BW.write("YYYY-MM-DD 형식으로 입력 바랍니다.\n");
-		BW.flush();
-		String startDate = null;
+        BW.write("휴가시작일 : \n");
+        BW.write("YYYY-MM-DD 형식으로 입력 바랍니다.\n");
+        BW.flush();
+        String startDate = null;
 
-		while (true) {
-			startDate = BR.readLine();
+        while (true) {
+            startDate = BR.readLine();
 
-			if (!Validation.ValidateDate(startDate)) {
-				BW.write("YYYY-MM-DD 형식으로 입력 바랍니다.\n");
-				BW.flush();
-				continue;
-			} else {
-				break;
-			}
-		}
 
-		BW.write("휴가종료일 : \n");
-		BW.write("YYYY-MM-DD 형식으로 입력 바랍니다.\n");
-		BW.flush();
-		String endDate = null;
+            if (!Validation.ValidateDate(startDate)) {
+                BW.write("YYYY-MM-DD 형식으로 입력 바랍니다.\n");
+                BW.flush();
+                continue;
+            } else {
+                break;
+            }
+        }
 
-		while (true) {
-			endDate = BR.readLine();
+        BW.write("휴가종료일 : \n");
+        BW.write("YYYY-MM-DD 형식으로 입력 바랍니다.\n");
+        BW.flush();
+        String endDate = null;
 
-			if (!Validation.ValidateDate(endDate)) {
-				BW.write("YYYY-MM-DD 형식으로 입력 바랍니다.\n");
-				BW.flush();
-				continue;
-			} else {
-				break;
-			}
-		}
+        while (true) {
+            endDate = BR.readLine();
 
-		BW.write("사유 입력해주세요(20자이내) : ");
-		BW.flush();
-		String reason = BR.readLine();
+            if (!Validation.ValidateDate(endDate)) {
+                BW.write("YYYY-MM-DD 형식으로 입력 바랍니다.\n");
+                BW.flush();
+            } else {
+                break;
+            }
+        }
+
+        BW.write("사유 입력해주세요 : ");
+        BW.flush();
+        String reason = BR.readLine();
+        BW.write(reason);
+        BW.flush();
+
+
+
 
 		pstmt.setString(1, startDate);
 		pstmt.setString(2, endDate);
 		pstmt.setString(3, reason);
 
-		pstmt.executeUpdate();
+
+        pstmt.executeUpdate();
+
 
 		BW.write("\n휴가신청 되었습니다. ");
 		BW.flush();
@@ -251,4 +259,6 @@ public class LeaveServiceImpl implements LeaveService {
 
 	}
 
-}
+
+    }
+

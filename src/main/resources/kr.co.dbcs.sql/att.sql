@@ -2,13 +2,14 @@ DROP TABLE att;
 
 CREATE TABLE att
 (
-    recordid  NUMBER
+    attid  NUMBER
         CONSTRAINT att_pk
             PRIMARY KEY,
     attdate   DATE         NOT NULL,
-    starttime TIMESTAMP    NOT NULL,
-    endtime   TIMESTAMP,
-    usrid     VARCHAR2(20) NOT NULL
+    starttime TIMESTAMP DEFAULT TO_CHAR(sysDate,'yyyy-mm-dd'),
+    endtime   TIMESTAMP DEFAULT TO_CHAR(sysDate,'yyyy-mm-dd'),
+    usrid     VARCHAR2(20) Not Null
         CONSTRAINT att_usr_usrid_fk
-            REFERENCES usr (usrid)
+            REFERENCES usr (usrid),
+            atttype VARCHAR2(20)
 );

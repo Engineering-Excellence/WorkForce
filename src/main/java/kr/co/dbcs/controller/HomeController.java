@@ -6,7 +6,9 @@ import kr.co.dbcs.service.EmpServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
+import java.text.ParseException;
 
 import static kr.co.dbcs.util.JdbcManager.BR;
 import static kr.co.dbcs.util.JdbcManager.BW;
@@ -14,7 +16,7 @@ import static kr.co.dbcs.util.JdbcManager.BW;
 @Slf4j
 public class HomeController {
 
-    public void home(UsrDTO usrDTO) throws IOException, SQLException, ClassNotFoundException {
+    public void home(UsrDTO usrDTO) throws IOException, SQLException, ClassNotFoundException, NoSuchAlgorithmException, ParseException {
 
         BW.write(usrDTO.getUsrID() + "님 환영합니다.\n");
         BW.flush();
@@ -30,16 +32,16 @@ public class HomeController {
                     return;
                 case "1":
                     // 근로자
-                    new EmpServiceImpl(usrDTO.getUsrID()).empMenu();
+                    new EmpServiceImpl(usrDTO).empMenu();
                     break;
                 case "2":
                     // 관리자
-                	if(usrDTO.isLoginType()) {
-                		new AdminServiceImpl(usrDTO.getUsrID()).adminMenu();
-                	} else {
-                		BW.write("관리자 아이디가 아닙니다. 관리자에게 문의하세요.\n");
-                		BW.flush();
-                	}
+                    if (usrDTO.isLoginType()) {
+                        new AdminServiceImpl(usrDTO.getUsrID()).adminMenu();
+                    } else {
+                        BW.write("관리자 아이디가 아닙니다. 관리자에게 문의하세요.\n");
+                        BW.flush();
+                    }
                     break;
                 case "3":
                     // 서비스 메서드
