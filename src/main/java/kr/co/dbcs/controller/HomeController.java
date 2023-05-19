@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
+import java.text.ParseException;
 
 import static kr.co.dbcs.util.JdbcManager.BR;
 import static kr.co.dbcs.util.JdbcManager.BW;
@@ -15,7 +16,7 @@ import static kr.co.dbcs.util.JdbcManager.BW;
 @Slf4j
 public class HomeController {
 
-    public void home(UsrDTO usrDTO) throws IOException, SQLException, ClassNotFoundException, NoSuchAlgorithmException {
+    public void home(UsrDTO usrDTO) throws IOException, SQLException, ClassNotFoundException, NoSuchAlgorithmException, ParseException {
 
         BW.write(usrDTO.getUsrID() + "님 환영합니다.\n");
         BW.flush();

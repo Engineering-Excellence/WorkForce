@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.sql.*;
+import java.text.ParseException;
 
 import static kr.co.dbcs.util.JdbcManager.*;
 
@@ -22,7 +23,7 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public void adminMenu() throws IOException {
+    public void adminMenu() throws IOException, SQLException, ParseException {
     	while(true) {
     		showMenu();
     		
@@ -44,7 +45,7 @@ public class AdminServiceImpl implements AdminService {
                 break;
             case "4":
                 // 급여관리
-            	
+            	new SalServiceImpl(emp).salStart();
                 break;
             case "5":
                 // 부서관리
@@ -62,7 +63,7 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public void showMenu() throws IOException {
-        BW.write("\n======================================================================\n");
+    	BW.write("\n======================================================================\n");
         BW.write("|\t\t     임직원근태관리 관리자 메뉴\t\t\t     |\n");
         BW.write("======================================================================\n");
         BW.write("|\t    1. 직원관리\t\t   |\t        2. 출근관리\t     |\n");
@@ -71,7 +72,7 @@ public class AdminServiceImpl implements AdminService {
         BW.write("======================================================================\n");
         BW.write("|\t    5. 부서관리\t\t   |\t        6. 직급관리\t     |\n");
         BW.write("======================================================================\n");
-        BW.write("|\t\t원하는 기능을 선택하세요.(0번 : 종료)\t\t     |\n");
+        BW.write("|\t원하는 기능을 선택하세요.(0번 : 홈화면으로 돌아가기)\t     |\n");
         BW.write("======================================================================\n");
         BW.flush();
     }
