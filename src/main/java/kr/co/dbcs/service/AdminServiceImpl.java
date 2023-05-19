@@ -1,13 +1,19 @@
 package kr.co.dbcs.service;
 
-import kr.co.dbcs.domain.EmpDTO;
-import lombok.extern.slf4j.Slf4j;
+import static kr.co.dbcs.util.JdbcManager.BR;
+import static kr.co.dbcs.util.JdbcManager.BW;
+import static kr.co.dbcs.util.JdbcManager.MANAGER;
 
 import java.io.IOException;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.text.ParseException;
 
-import static kr.co.dbcs.util.JdbcManager.*;
+import kr.co.dbcs.domain.EmpDTO;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class AdminServiceImpl implements AdminService {
@@ -39,6 +45,9 @@ public class AdminServiceImpl implements AdminService {
                 break;
             case "2":
                 // 출근관리
+            	BW.write("출퇴근 관리 관리자 메뉴로 이동합니다.\n");
+                BW.flush();
+            	new AttServiceImpl(emp.getUsrID()).attAdminMenu();
                 break;
             case "3":
                 // 휴가관리
@@ -49,6 +58,7 @@ public class AdminServiceImpl implements AdminService {
                 break;
             case "5":
                 // 부서관리
+            	new DeptServiceImpl().deptStart();
                 break;
             case "6":
                 // 직급관리
