@@ -9,11 +9,11 @@ public interface LeaveService {
 
 	void leaveInsert() throws IOException, SQLException;
 	
-	void leaveSelect();
+	void leaveSelect() throws IOException, SQLException ;
 	
-	void leaveDelete();
+	void leaveDelete() throws IOException, SQLException ;
 	
-	void leaveupdate();
+	void leaveUpdate() throws IOException, SQLException ;
 	
 
 }
