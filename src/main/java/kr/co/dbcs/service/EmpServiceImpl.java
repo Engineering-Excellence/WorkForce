@@ -22,9 +22,8 @@ public class EmpServiceImpl implements EmpService {
     private EmpDTO empDTO;
     private UsrDTO usrDTO;
 
-    public EmpServiceImpl(UsrDTO DTO) throws SQLException {
-        usrDTO = DTO;
-        log.info(String.valueOf(usrDTO));
+    public EmpServiceImpl(UsrDTO dto) throws SQLException {
+        usrDTO = dto;
     }
 
     @Override
@@ -58,8 +57,7 @@ public class EmpServiceImpl implements EmpService {
                 case "1":
                     BW.write("출퇴근 메뉴로 이동합니다.\n");
                     BW.flush();
-                    AttService attService = new AttServiceImpl();
-                    attService.attMenu();
+                    new AttServiceImpl().attMenu();
                     // 출퇴근 확인
                     break;
                 case "2":
@@ -67,8 +65,7 @@ public class EmpServiceImpl implements EmpService {
                     showEmpInfo();
                     break;
                 case "3":
-                    LeaveService Les = new LeaveServiceImpl();
-                    Les.leaveMenu();
+                    new LeaveServiceImpl().leaveMenu();
                     break;
                 default:
                     BW.write("잘못된 입력입니다.\n");
@@ -110,7 +107,7 @@ public class EmpServiceImpl implements EmpService {
             BW.write("\n잔여휴가: " + empDTO.getLeaveDay());
             BW.write("\n부서코드: " + empDTO.getDeptCode());
             BW.write("\n직급코드: " + empDTO.getPosCode() + "\n\n");
-            BW.write("메뉴 입력(0: 이전 화면): ");
+            BW.write("메뉴 입력(0: 이전 화면, 1: 인적사항 수정): ");
             BW.flush();
 
             switch (BR.readLine().trim()) {
@@ -143,7 +140,7 @@ public class EmpServiceImpl implements EmpService {
                 updateContact();
                 break;
             default:
-                BW.write("인적사항 수정이 취소되었습니다.\n");
+                BW.write("잘못된 입력입니다.\n");
                 BW.flush();
                 break;
         }
@@ -161,7 +158,7 @@ public class EmpServiceImpl implements EmpService {
         do {
             BW.write("현재 비밀번호를 입력하세요.: ");
             BW.flush();
-            pw = BR.readLine();
+            pw = BR.readLine().trim();
 
             pw_decrypt = LoginSHA.SHA512(pw, salt);
         } while (!pw_decrypt.equals(dataPw));
@@ -169,15 +166,15 @@ public class EmpServiceImpl implements EmpService {
         while (true) {
             BW.write("새로운 비밀번호를 입력하세요. (비밀번호는 8자이상 영문, 숫자, 특수문자를 포함해야 합니다.): ");
             BW.flush();
-            pw = BR.readLine();
+            pw = BR.readLine().trim();
 
             if (!Validation.ValidatePw(pw)) {
                 BW.write("비밀번호는 8자이상 영문, 숫자, 특수문자를 포함해야 합니다.\n");
                 BW.flush();
             } else {
                 String pw_encrypt = LoginSHA.SHA512(pw, salt);
-                pstmt = conn.prepareStatement("UPDATE EMP SET PW = ? WHERE USRID = '" + usrDTO.getUsrID() + "'");
-                pstmt.setString(1, pw_encrypt);   //
+                pstmt = conn.prepareStatement("UPDATE USR SET PW = ? WHERE USRID = '" + usrDTO.getUsrID() + "'");
+                pstmt.setString(1, pw_encrypt);
                 pstmt.executeUpdate();
                 break;
             }
