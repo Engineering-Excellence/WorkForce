@@ -4,20 +4,22 @@ import java.io.IOException;
 import java.sql.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 
 import kr.co.dbcs.domain.EmpDTO;
 import kr.co.dbcs.domain.SalDTO;
+import lombok.extern.slf4j.Slf4j;
 
 import static kr.co.dbcs.util.JdbcManager.BR;
 import static kr.co.dbcs.util.JdbcManager.BW;
 import static kr.co.dbcs.util.JdbcManager.MANAGER;
 
+@Slf4j
 public class SalServiceImpl implements SalService {
 	private final Connection conn = MANAGER.getConnection();
 	private final Statement stmt = MANAGER.getStatement();
 	private PreparedStatement pstmt;
 	private ResultSet rs;
-	private Date payDate;
 	private EmpDTO emp;
 
 	public SalServiceImpl(EmpDTO emp) throws SQLException {
@@ -78,7 +80,7 @@ public class SalServiceImpl implements SalService {
 		BW.write("변경하실 지급일을 입력해주세요 : ");
 		BW.flush();
 		
-		String sqlUpdate = "update sal set paydate = to_date(?, 'DD') where salID = (select max(salID) from sal)";
+		String sqlUpdate = "UPDATE SAL SET PAYDATE = TO_DATE(?, 'DD') WHERE SALID = (SELECT MAX(SALID) FROM SAL)";
 		
 		String date =  BR.readLine();
 		
@@ -88,8 +90,46 @@ public class SalServiceImpl implements SalService {
 	}
 
 	@Override
-	public void paySal() {
-		// TODO Auto-generated method stub
+	public void paySal() throws SQLException, IOException {
+		String sqlSearchAll = "SELECT USRID, SAL, DEPTCODE FROM EMP";
+		String sqlSearchDate = "SELECT PAYDATE FROM SAL WHERE ROWNUM = 1 ORDER BY SALID DESC";
+		rs = stmt.executeQuery(sqlSearchAll);
 		
+		ArrayList<EmpDTO> list = new ArrayList<>();
+		while(rs.next()) {
+			EmpDTO emp = new EmpDTO();
+			emp.setUsrID(rs.getString("USRID"));
+			emp.setSal(rs.getInt("SAL"));
+			emp.setDeptCode(rs.getInt("DEPTCODE"));
+			list.add(emp);
+		}
+		
+		rs = stmt.executeQuery(sqlSearchDate);
+		
+		
+		SalDTO sal = new SalDTO();
+		while(rs.next()) {
+			sal.setPayDate(rs.getDate("payDate"));
+		}
+		
+		SimpleDateFormat sdf = new SimpleDateFormat("dd");
+		String str = sdf.format(sal.getPayDate());
+		
+		String sqlInsert = "insert into sal values(salrecord.nextval, to_date(?, 'DD'), ?, ?)";
+		
+		for (int i = 0; i < list.size(); i++) {
+			pstmt = conn.prepareStatement(sqlInsert);
+			pstmt.setString(1, str);
+			if(list.get(i).getDeptCode() == 50 || list.get(i).getDeptCode() == 60 || list.get(i).getDeptCode() == 70) {
+				pstmt.setLong(2, Math.round(list.get(i).getSal() * 1.2));
+			} else {
+				pstmt.setLong(2, list.get(i).getSal());
+			}
+			pstmt.setString(3, list.get(i).getUsrID());
+			pstmt.executeUpdate();
+		}
+		
+		BW.write("임금이 일괄 지급되었습니다.");
+		BW.flush();
 	}
 }
