@@ -16,7 +16,7 @@ public class AdminServiceImpl implements AdminService {
 
     private EmpDTO emp = new EmpDTO();
 
-    public AdminServiceImpl(String usrID) throws SQLException {
+    public AdminServiceImpl(String usrID) {
         emp.setUsrID(usrID);
     }
 

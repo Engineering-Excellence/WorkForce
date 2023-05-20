@@ -115,8 +115,8 @@ public class UsrServiceImpl implements UsrService {
                 pw = cPw;
             }
 
-            salt = LoginSHA.Salt();
-            String pw_encrypt = LoginSHA.SHA512(pw, salt);
+            salt = LoginSHA.salt();
+            String pw_encrypt = LoginSHA.sha512(pw, salt);
 
             pstmtInsert.setString(1, id);
             pstmtInsert.setString(2, pw_encrypt);
@@ -228,8 +228,8 @@ public class UsrServiceImpl implements UsrService {
 
             dataId.split(" ");
 
-            salt = LoginSHA.Salt();
-            String pw_decrypt = LoginSHA.SHA512(pw, salt);
+            salt = LoginSHA.salt();
+            String pw_decrypt = LoginSHA.sha512(pw, salt);
 
             if (id.equals(dataId)) {
                 if (pw_decrypt.equals(dataPw)) {

@@ -7,7 +7,7 @@ import java.util.Base64;
 
 public class LoginSHA {
 
-    public static String Salt() throws NoSuchAlgorithmException {
+    public static String salt() throws NoSuchAlgorithmException {
 
         String salt = "";
         byte[] bytes = {3, 4, 5, 6, 7, 8, 1, 3, 4, 9, 0, 4, 5, 7, 6, 2};
@@ -17,7 +17,7 @@ public class LoginSHA {
         return salt;
     }
 
-    public static String SHA512(String pw, String hash) throws NoSuchAlgorithmException {
+    public static String sha512(String pw, String hash) throws NoSuchAlgorithmException {
 
         String salt = hash + pw;
         String hex = null;

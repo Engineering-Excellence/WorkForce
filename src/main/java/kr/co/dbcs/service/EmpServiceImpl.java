@@ -75,6 +75,7 @@ public class EmpServiceImpl implements EmpService {
         }
     }
 
+    // 근로자 인적사항 확인
     @Override
     public void showEmpInfo() throws SQLException, IOException, ClassNotFoundException, NoSuchAlgorithmException {
 
@@ -136,6 +137,7 @@ public class EmpServiceImpl implements EmpService {
         }
     }
 
+    // 근로자 인적사항 변경
     @Override
     public void updateEmpInfo() throws SQLException, IOException, NoSuchAlgorithmException {
 
@@ -166,10 +168,11 @@ public class EmpServiceImpl implements EmpService {
         }
     }
 
+    // 비밀번호 변경
     @Override
     public void updatePw(String usrID) throws SQLException, IOException, NoSuchAlgorithmException {
 
-        String salt = LoginSHA.Salt();
+        String salt = LoginSHA.salt();
 
         String pw;
         String pw_decrypt;
@@ -179,7 +182,7 @@ public class EmpServiceImpl implements EmpService {
             BW.write("현재 비밀번호를 입력하세요.: ");
             BW.flush();
             pw = BR.readLine().trim();
-            pw_decrypt = LoginSHA.SHA512(pw, salt);
+            pw_decrypt = LoginSHA.sha512(pw, salt);
         } while (!pw_decrypt.equals(dataPw));
 
         while (true) {
@@ -191,7 +194,7 @@ public class EmpServiceImpl implements EmpService {
                 BW.write("비밀번호는 8자이상 영문, 숫자, 특수문자를 포함해야 합니다.\n");
                 BW.flush();
             } else {
-                String pw_encrypt = LoginSHA.SHA512(pw, salt);
+                String pw_encrypt = LoginSHA.sha512(pw, salt);
                 pstmt = conn.prepareStatement("UPDATE USR SET PW = ? WHERE USRID = '" + usrID + "'");
                 pstmt.setString(1, pw_encrypt);
                 int res = pstmt.executeUpdate();
@@ -201,6 +204,7 @@ public class EmpServiceImpl implements EmpService {
         }
     }
 
+    // 연락처 변경
     @Override
     public void updateContact(String usrID) throws SQLException, IOException {
 
@@ -212,8 +216,11 @@ public class EmpServiceImpl implements EmpService {
             if (Validation.validateContact(contact)) {
                 pstmt = conn.prepareStatement("UPDATE EMP SET CONTACT = ? WHERE USRID = '" + usrID + "'");
                 pstmt.setString(1, contact);
-                pstmt.executeUpdate();
-                empDTO.setContact(contact);
+                int res = pstmt.executeUpdate();
+                if (res > 0) {
+                    BW.write("연락처가 변경되었습니다.\n\n");
+                    empDTO.setContact(contact);
+                }
                 break;
             } else {
                 BW.write("잘못 입력하셨습니다. '010-xxxx-xxxx' 형식으로 입력해주세요.\n");
@@ -221,6 +228,7 @@ public class EmpServiceImpl implements EmpService {
         }
     }
 
+    // 관리자 메뉴
     @Override
     public void adminEmpMenu() throws IOException, SQLException {
 
@@ -263,6 +271,7 @@ public class EmpServiceImpl implements EmpService {
         }
     }
 
+    // 직원 검색
     @Override
     public void searchEmp() throws IOException, SQLException {
 
@@ -305,6 +314,7 @@ public class EmpServiceImpl implements EmpService {
         BW.flush();
     }
 
+    // 부서 이동
     @Override
     public void updateDept() throws SQLException, IOException, NumberFormatException {
 
@@ -322,6 +332,7 @@ public class EmpServiceImpl implements EmpService {
         if (res > 0) BW.write(String.format("%s님의 부서가 %s(으)로변경되었습니다.%n", usrID, deptName));
     }
 
+    // 직급 관리
     @Override
     public void updatePos() throws SQLException, IOException {
 
@@ -339,6 +350,7 @@ public class EmpServiceImpl implements EmpService {
         if (res > 0) BW.write(String.format("%s님의 직급이 %s(으)로변경되었습니다.%n", usrID, posName));
     }
 
+    // 급여 관리
     @Override
     public void updateSal() throws SQLException, IOException {
 
