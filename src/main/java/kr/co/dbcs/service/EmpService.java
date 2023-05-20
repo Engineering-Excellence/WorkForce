@@ -15,4 +15,14 @@ public interface EmpService {
     void updatePw(String usrID) throws SQLException, ClassNotFoundException, IOException, NoSuchAlgorithmException;
 
     void updateContact(String usrID) throws SQLException, IOException;
+
+    void adminEmpMenu() throws IOException, SQLException;
+
+    void searchEmp() throws IOException, SQLException;
+
+    void updateDept() throws SQLException, IOException;
+
+    void updatePos() throws SQLException, IOException;
+
+    void updateSal() throws SQLException, IOException;
 }

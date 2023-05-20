@@ -5,18 +5,15 @@ import kr.co.dbcs.domain.UsrDTO;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
-import java.sql.*;
+import java.sql.SQLException;
 import java.text.ParseException;
 
-import static kr.co.dbcs.util.JdbcManager.*;
+import static kr.co.dbcs.util.JdbcManager.BR;
+import static kr.co.dbcs.util.JdbcManager.BW;
 
 @Slf4j
 public class AdminServiceImpl implements AdminService {
 
-//    private final Connection conn = MANAGER.getConnection();
-//    private final Statement stmt = MANAGER.getStatement();
-//    private PreparedStatement pstmt;
-//    private ResultSet rs;
     private EmpDTO emp = new EmpDTO();
 
     public AdminServiceImpl(String usrID) throws SQLException {
@@ -25,6 +22,7 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public void adminMenu() throws IOException, SQLException, ParseException, ClassNotFoundException {
+
         while (true) {
             showAdminMenu();
 
@@ -45,7 +43,7 @@ public class AdminServiceImpl implements AdminService {
                     break;
                 case "3":
                     // 휴가관리
-                	new LeaveServiceImpl(emp.getUsrID()).leaveAdmin();
+                    new LeaveServiceImpl(emp.getUsrID()).leaveAdmin();
                     break;
                 case "4":
                     // 급여관리
@@ -69,6 +67,7 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public void showAdminMenu() throws IOException {
+
         BW.write("\n======================================================================\n");
         BW.write("|\t\t     임직원근태관리 관리자 메뉴\t\t\t     |\n");
         BW.write("======================================================================\n");
