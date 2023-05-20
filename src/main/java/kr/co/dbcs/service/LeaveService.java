@@ -5,7 +5,9 @@ import java.sql.SQLException;
 
 public interface LeaveService {
 
-    void leaveMenu() throws IOException, ClassNotFoundException, SQLException;
+    void leaveEmp() throws IOException, ClassNotFoundException, SQLException;
+    
+    public void leaveAdmin() throws IOException, ClassNotFoundException, SQLException;
 
 	void leaveInsert() throws IOException, SQLException;
 	
@@ -15,5 +17,9 @@ public interface LeaveService {
 	
 	void leaveUpdate() throws IOException, SQLException ;
 	
-
+	void leaveType() throws IOException;
+	
+	void leaveselectAll() throws IOException, SQLException;
+	
+	public void approveLeave() throws IOException, SQLException;
 }

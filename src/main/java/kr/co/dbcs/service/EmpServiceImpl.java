@@ -65,7 +65,7 @@ public class EmpServiceImpl implements EmpService {
                     showEmpInfo();
                     break;
                 case "3":
-                    new LeaveServiceImpl().leaveMenu();
+                    new LeaveServiceImpl().leaveEmp();
                     break;
                 default:
                     BW.write("잘못된 입력입니다.\n");
