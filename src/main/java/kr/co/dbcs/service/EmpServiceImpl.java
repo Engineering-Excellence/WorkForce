@@ -109,7 +109,7 @@ public class EmpServiceImpl implements EmpService {
         String posName = rs.getString("POSNAME");
 
         while (true) {
-            BW.write("사용자ID: " + empDTO.getUsrID());
+            BW.write("\n사용자ID: " + empDTO.getUsrID());
             BW.write("\n이름: " + empDTO.getName());
             BW.write("\n생년월일: " + empDTO.getBirthDate());
             BW.write("\n성별: " + (empDTO.isGender() ? "남" : "여"));
@@ -187,14 +187,15 @@ public class EmpServiceImpl implements EmpService {
             BW.flush();
             pw = BR.readLine().trim();
 
-            if (!Validation.ValidatePw(pw)) {
+            if (!Validation.validatePw(pw)) {
                 BW.write("비밀번호는 8자이상 영문, 숫자, 특수문자를 포함해야 합니다.\n");
                 BW.flush();
             } else {
                 String pw_encrypt = LoginSHA.SHA512(pw, salt);
                 pstmt = conn.prepareStatement("UPDATE USR SET PW = ? WHERE USRID = '" + usrID + "'");
                 pstmt.setString(1, pw_encrypt);
-                pstmt.executeUpdate();
+                int res = pstmt.executeUpdate();
+                if (res > 0) BW.write("비밀번호가 변경되었습니다.\n\n");
                 break;
             }
         }
@@ -203,13 +204,21 @@ public class EmpServiceImpl implements EmpService {
     @Override
     public void updateContact(String usrID) throws SQLException, IOException {
 
-        pstmt = conn.prepareStatement("UPDATE EMP SET CONTACT = ? WHERE USRID = '" + usrID + "'");
-        BW.write("수정할 연락처를 입력하세요: ");
-        BW.flush();
-        String contact = BR.readLine().trim();
-        pstmt.setString(1, contact);
-        pstmt.executeUpdate();
-        empDTO.setContact(contact);
+        while (true) {
+            BW.write("수정할 연락처를 입력하세요: ");
+            BW.flush();
+            String contact = BR.readLine().trim();
+
+            if (Validation.validateContact(contact)) {
+                pstmt = conn.prepareStatement("UPDATE EMP SET CONTACT = ? WHERE USRID = '" + usrID + "'");
+                pstmt.setString(1, contact);
+                pstmt.executeUpdate();
+                empDTO.setContact(contact);
+                break;
+            } else {
+                BW.write("잘못 입력하셨습니다. '010-xxxx-xxxx' 형식으로 입력해주세요.\n");
+            }
+        }
     }
 
     @Override
@@ -221,7 +230,7 @@ public class EmpServiceImpl implements EmpService {
             BW.write("======================================================================\n");
             BW.write("|\t    1. 직원검색\t\t   |\t        2. 부서이동\t     |\n");
             BW.write("======================================================================\n");
-            BW.write("|\t    3. 직급관리\t\t   |\t        3. 급여관리\t     |\n");
+            BW.write("|\t    3. 직급관리\t\t   |\t        4. 급여관리\t     |\n");
             BW.write("======================================================================\n");
             BW.write("|\t\t원하는 기능을 선택하세요.(0번 : 이전)\t\t     |\n");
             BW.write("======================================================================\n");
@@ -266,7 +275,6 @@ public class EmpServiceImpl implements EmpService {
 
         BW.write("\n================================================================================================================================================================\n");
         BW.write(String.format("%22s\t%5s\t%12s\t%3s\t%10s\t%8s\t%6s\t%5s%8s\t%8s", "ID", "이름", "생년월일", "성별", "연락처", "입사일", "기본급", "잔여휴가", "부서명", "직급"));
-//        BW.write(String.format("%22s\t%5s\t%10s\t\t%3s\t%15s\t%12s\t%9s\t%4s\t%10s\t%10s", "ID", "이름", "생년월일", "성별", "연락처", "입사일", "기본급", "잔여휴가", "부서명", "직급"));
         BW.write("\n================================================================================================================================================================\n");
 
         while (rs.next()) {
@@ -281,7 +289,7 @@ public class EmpServiceImpl implements EmpService {
             subRs.next();
             String posName = subRs.getString("POSNAME");
 
-            BW.write(String.format("%22s\t%5s\t%10s\t%3s\t%15s\t%12s\t%9s\t%4s\t%10s\t%10s",
+            BW.write(String.format("%22s\t%5s\t%10s\t%3s\t%15s\t%12s\t%9s\t%4s\t%10s\t%10s%n",
                     rs.getString("USRID"),
                     rs.getString("NAME"),
                     rs.getDate("BIRTHDATE"),
@@ -293,7 +301,7 @@ public class EmpServiceImpl implements EmpService {
                     deptName,
                     posName));
         }
-        BW.write("\n================================================================================================================================================================\n");
+        BW.write("================================================================================================================================================================\n");
         BW.flush();
     }
 
