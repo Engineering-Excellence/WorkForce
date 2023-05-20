@@ -1,19 +1,14 @@
 package kr.co.dbcs.service;
 
-import static kr.co.dbcs.util.JdbcManager.BR;
-import static kr.co.dbcs.util.JdbcManager.BW;
-import static kr.co.dbcs.util.JdbcManager.MANAGER;
+import kr.co.dbcs.domain.EmpDTO;
+import kr.co.dbcs.domain.UsrDTO;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.text.ParseException;
 
-import kr.co.dbcs.domain.EmpDTO;
-import lombok.extern.slf4j.Slf4j;
+import static kr.co.dbcs.util.JdbcManager.*;
 
 @Slf4j
 public class AdminServiceImpl implements AdminService {
@@ -31,7 +26,7 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public void adminMenu() throws IOException, SQLException, ParseException, ClassNotFoundException {
     	while(true) {
-    		showMenu();
+    		showAdminMenu();
     		
     		String menu = BR.readLine().trim();
     		
@@ -42,6 +37,7 @@ public class AdminServiceImpl implements AdminService {
                 return;
             case "1":
             	// 직원관리
+                new EmpServiceImpl(new UsrDTO()).adminEmpMenu();
                 break;
             case "2":
                 // 출근관리
@@ -74,7 +70,7 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public void showMenu() throws IOException {
+    public void showAdminMenu() throws IOException {
     	BW.write("\n======================================================================\n");
         BW.write("|\t\t     임직원근태관리 관리자 메뉴\t\t\t     |\n");
         BW.write("======================================================================\n");

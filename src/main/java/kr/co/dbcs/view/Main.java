@@ -1,16 +1,15 @@
 package kr.co.dbcs.view;
 
 import kr.co.dbcs.service.UsrServiceImpl;
-import kr.co.dbcs.util.JdbcManager;
 
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 import java.text.ParseException;
 
-public class Main {
+import static kr.co.dbcs.util.JdbcManager.MANAGER;
 
-    private static final JdbcManager MANAGER = JdbcManager.getInstance();
+public class Main {
 
     public static void main(String[] args) throws ClassNotFoundException, IOException, SQLException, NoSuchAlgorithmException, ParseException {
 

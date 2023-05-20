@@ -48,7 +48,10 @@ public class JdbcManager {
 
     public synchronized Statement getStatement() throws SQLException {
 
-        if (statement == null || statement.isClosed()) statement = connection.createStatement();
+        if (statement == null || statement.isClosed()) {
+            statement = connection.createStatement();
+            log.info("STMT SUCCESS");
+        }
         return statement;
     }
 

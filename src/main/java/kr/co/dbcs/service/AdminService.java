@@ -8,5 +8,5 @@ public interface AdminService {
 
     void adminMenu() throws IOException, SQLException, ParseException, ClassNotFoundException;
 
-    void showMenu() throws IOException;
+    void showAdminMenu() throws IOException;
 }

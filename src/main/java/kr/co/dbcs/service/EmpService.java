@@ -12,7 +12,7 @@ public interface EmpService {
 
     void updateEmpInfo() throws SQLException, ClassNotFoundException, IOException, NoSuchAlgorithmException;
 
-    void updatePw() throws SQLException, ClassNotFoundException, IOException, NoSuchAlgorithmException;
+    void updatePw(String usrID) throws SQLException, ClassNotFoundException, IOException, NoSuchAlgorithmException;
 
-    void updateContact() throws SQLException, IOException;
+    void updateContact(String usrID) throws SQLException, IOException;
 }

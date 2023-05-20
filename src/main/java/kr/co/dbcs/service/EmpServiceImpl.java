@@ -34,11 +34,14 @@ public class EmpServiceImpl implements EmpService {
             BW.write("\n======================================================================\n");
             BW.write("|\t\t\t임직원근태관리 근로자 메뉴\t\t     |\n");
             BW.write("======================================================================\n");
-            BW.write("|  1. 출퇴근 기록 \t|  2. 인적사항 \t|  3. 휴가 관리              |\n");
+            BW.write("|\t    1. 근무기록\t\t   |\t        2. 인적사항\t     |\n");
+            BW.write("======================================================================\n");
+            BW.write("|\t    3. 휴가신청\t\t    \t                  \t     |\n");
             BW.write("======================================================================\n");
             BW.write("|\t\t원하는 기능을 선택하세요.(0번 : 종료)\t\t     |\n");
             BW.write("======================================================================\n");
             BW.flush();
+
 
             String menu = BR.readLine().trim();
 
@@ -134,10 +137,10 @@ public class EmpServiceImpl implements EmpService {
         BW.flush();
         switch (BR.readLine().trim()) {
             case "1":
-                updatePw();
+                updatePw(usrDTO.getUsrID());
                 break;
             case "2":
-                updateContact();
+                updateContact(usrDTO.getUsrID());
                 break;
             default:
                 BW.write("잘못된 입력입니다.\n");
@@ -147,7 +150,7 @@ public class EmpServiceImpl implements EmpService {
     }
 
     @Override
-    public void updatePw() throws SQLException, IOException, NoSuchAlgorithmException {
+    public void updatePw(String usrID) throws SQLException, IOException, NoSuchAlgorithmException {
 
         String salt = LoginSHA.Salt();
 
@@ -173,7 +176,7 @@ public class EmpServiceImpl implements EmpService {
                 BW.flush();
             } else {
                 String pw_encrypt = LoginSHA.SHA512(pw, salt);
-                pstmt = conn.prepareStatement("UPDATE USR SET PW = ? WHERE USRID = '" + usrDTO.getUsrID() + "'");
+                pstmt = conn.prepareStatement("UPDATE USR SET PW = ? WHERE USRID = '" + usrID + "'");
                 pstmt.setString(1, pw_encrypt);
                 pstmt.executeUpdate();
                 break;
@@ -182,12 +185,45 @@ public class EmpServiceImpl implements EmpService {
     }
 
     @Override
-    public void updateContact() throws SQLException, IOException {
+    public void updateContact(String usrID) throws SQLException, IOException {
 
-        pstmt = conn.prepareStatement("UPDATE EMP SET CONTACT = ? WHERE USRID = '" + usrDTO.getUsrID() + "'");
+        pstmt = conn.prepareStatement("UPDATE EMP SET CONTACT = ? WHERE USRID = '" + usrID + "'");
         BW.write("수정할 연락처를 입력하세요: ");
         BW.flush();
         pstmt.setString(1, BR.readLine().trim());
         pstmt.executeUpdate();
+    }
+
+    public void adminEmpMenu() throws IOException {
+
+        while (true) {
+            BW.write("\n======================================================================\n");
+            BW.write("|\t\t     임직원근태관리 관리자 메뉴\t\t\t     |\n");
+            BW.write("======================================================================\n");
+            BW.write("|\t    1. 부서관리\t\t   |\t        2. 직급관리\t     |\n");
+            BW.write("======================================================================\n");
+            BW.write("|\t    3. 급여관리\t\t   |\t                  \t     |\n");
+            BW.write("======================================================================\n");
+            BW.write("|\t원하는 기능을 선택하세요.(0번 : 홈화면으로 돌아가기)\t     |\n");
+            BW.write("======================================================================\n");
+
+            switch (BR.readLine().trim()) {
+                case "0":
+                    // 이전 화면
+                    return;
+                case "1":
+                    // 부서 수정
+                    break;
+                case "2":
+                    // 직급 수정
+                    break;
+                case "3":
+                    // 기본급 수정
+                    break;
+                default:
+                    BW.write("잘못된 입력입니다.\n\n");
+                    break;
+            }
+        }
     }
 }

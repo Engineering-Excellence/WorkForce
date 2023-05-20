@@ -23,9 +23,8 @@ public class HomeController {
 
         while (true) {
             BW.write("\n");
-            homeScreen();
-            String menu = BR.readLine().trim();
-            switch (menu) {
+            showHomeMenu();
+            switch (BR.readLine().trim()) {
                 case "0":
                     BW.write("프로그램을 종료합니다.\n");
                     BW.flush();
@@ -43,15 +42,6 @@ public class HomeController {
                         BW.flush();
                     }
                     break;
-                case "3":
-                    // 서비스 메서드
-                    break;
-                case "4":
-                    // 서비스 메서드
-                    break;
-                case "5":
-                    // 서비스 메서드
-                    break;
                 default:
                     BW.write("잘못된 입력입니다.\n");
                     BW.flush();
@@ -60,7 +50,7 @@ public class HomeController {
         }
     }
 
-    private void homeScreen() throws IOException {
+    private void showHomeMenu() throws IOException {
 
         BW.write("======================================================================\n");
         BW.write("|\t\t\t임직원근태관리 홈\t\t\t     |\n");
