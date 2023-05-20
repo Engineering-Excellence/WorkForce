@@ -216,21 +216,15 @@ public class EmpServiceImpl implements EmpService {
                     return;
                 case "1":
                     // 부서 수정
-                    BW.write("부서를 이동할 직원 ID를 입력하세요.: ");
-                    BW.flush();
-                    updateDept(BR.readLine());
+                    updateDept();
                     break;
                 case "2":
                     // 직급 수정
-                    BW.write("직급을 변경할 직원 ID를 입력하세요.: ");
-                    BW.flush();
-                    updatePos(BR.readLine());
+                    updatePos();
                     break;
                 case "3":
                     // 기본급 수정
-                    BW.write("기본급을 변경할 직원 ID를 입력하세요.: ");
-                    BW.flush();
-                    updateSal(BR.readLine());
+                    updateSal();
                     break;
                 default:
                     BW.write("잘못된 입력입니다.\n\n");
@@ -243,32 +237,47 @@ public class EmpServiceImpl implements EmpService {
 
     }
 
-    private void updateDept(String usrID) throws SQLException, IOException {
+    private void updateDept() throws SQLException, IOException, NumberFormatException {
 
-        pstmt = conn.prepareStatement("UPDATE EMP SET DEPTCODE = ? WHERE USRID = '" + usrID + "'");
+        BW.write("부서를 이동할 직원 ID를 입력하세요.: ");
+        BW.flush();
+        String usrID = BR.readLine().trim();
         BW.write("변경할 부서를 입력하세요: ");
         BW.flush();
-        pstmt.setString(1, BR.readLine().trim());
+        int deptCode = Integer.parseInt(BR.readLine());
+        pstmt = conn.prepareStatement("UPDATE EMP SET DEPTCODE = ? WHERE USRID = ?");
+        pstmt.setInt(1, deptCode);
+        pstmt.setString(2, usrID);
         pstmt.executeUpdate();
         BW.write(usrID + "님의 부서가 변경되었습니다.\n");
     }
 
-    private void updatePos(String usrID) throws SQLException, IOException {
+    private void updatePos() throws SQLException, IOException {
 
-        pstmt = conn.prepareStatement("UPDATE EMP SET POSCODE = ? WHERE USRID = '" + usrID + "'");
+        BW.write("직급을 변경할 직원 ID를 입력하세요.: ");
+        BW.flush();
+        String usrID = BR.readLine().trim();
         BW.write("변경할 직급을 입력하세요: ");
         BW.flush();
-        pstmt.setString(1, BR.readLine().trim());
+        int posCode = Integer.parseInt(BR.readLine());
+        pstmt = conn.prepareStatement("UPDATE EMP SET POSCODE = ? WHERE USRID = ?");
+        pstmt.setInt(1, posCode);
+        pstmt.setString(2, usrID);
         pstmt.executeUpdate();
         BW.write(usrID + "님의 직급이 변경되었습니다.\n");
     }
 
-    private void updateSal(String usrID) throws SQLException, IOException {
+    private void updateSal() throws SQLException, IOException {
 
-        pstmt = conn.prepareStatement("UPDATE EMP SET SAL = ? WHERE USRID = '" + usrID + "'");
+        BW.write("기본급을 변경할 직원 ID를 입력하세요.: ");
+        BW.flush();
+        String usrID = BR.readLine().trim();
         BW.write("변경할 기본급을 입력하세요: ");
         BW.flush();
-        pstmt.setString(1, BR.readLine().trim());
+        int sal = Integer.parseInt(BR.readLine().trim());
+        pstmt = conn.prepareStatement("UPDATE EMP SET SAL = ? WHERE USRID = ?");
+        pstmt.setInt(1, sal);
+        pstmt.setString(2, BR.readLine().trim());
         pstmt.executeUpdate();
         BW.write(usrID + "님의 기본급이 변경되었습니다.\n");
     }
