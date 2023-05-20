@@ -55,9 +55,9 @@ public class EmpServiceImpl implements EmpService {
                     BW.flush();
                     return;
                 case "1":
-                    BW.write("출퇴근 메뉴로 이동합니다.\n");
+                    BW.write("출퇴근 관리 근로자 메뉴로 이동합니다.\n");
                     BW.flush();
-                    new AttServiceImpl().attMenu();
+                    new AttServiceImpl(usrDTO.getUsrID()).attMenu();
                     // 출퇴근 확인
                     break;
                 case "2":

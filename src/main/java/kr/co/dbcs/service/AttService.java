@@ -6,7 +6,9 @@ import java.sql.SQLException;
 public interface AttService {
 
     void attMenu() throws IOException, SQLException;
-
+    
+    void attAdminMenu() throws IOException, SQLException ;
+    
     public void goWork() throws SQLException, IOException;
 
     public void leaveWork() throws SQLException, IOException;
@@ -16,4 +18,6 @@ public interface AttService {
     public boolean searchAtt(String usrID) throws SQLException;
 
     public void selectAllAtt() throws SQLException, IOException;
+    
+    public void selectBy() throws SQLException, IOException;
 }

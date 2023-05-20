@@ -16,6 +16,7 @@ import java.util.Scanner;
 import java.util.StringTokenizer;
 
 import kr.co.dbcs.domain.AttDTO;
+import kr.co.dbcs.domain.EmpDTO;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -25,15 +26,16 @@ public class AttServiceImpl implements AttService {
 	private final Statement stmt = MANAGER.getStatement();
 	private PreparedStatement pstmt;
 	private ResultSet rs;
+	private String usrID;
+//	private static String usrID = "jaejin1112";
 
-	private static String usrID = "jaejin1112";
-
-	public AttServiceImpl() throws SQLException {
+	
+	public AttServiceImpl(String usrID2) throws SQLException{
+		usrID = usrID2;
 	}
 
 	@Override
-	public void attMenu() throws IOException, SQLException {
-
+	public void attAdminMenu() throws IOException, SQLException {
 		while (true) {
 
 			BW.write("-=-=-=-=-= JDBC Query =-=-=-=-=-\n" + "\t0. 출퇴근메뉴 종료\n" + "\t1. 출근하기\n" + "\t2. 퇴근하기\n"
@@ -68,11 +70,49 @@ public class AttServiceImpl implements AttService {
 			}
 
 		}
+	}
+
+	@Override
+	public void attMenu() throws IOException, SQLException {
+
+		while (true) {
+
+			BW.write("-=-=-=-=-= JDBC Query =-=-=-=-=-\n" + "\t0. 출퇴근메뉴 종료\n" + "\t1. 출근하기\n" + "\t2. 퇴근하기\n"
+					+ "\t3. 출퇴근기록 확인\n" + "\t4. 출퇴근기록 ID로 검색\n" + "\t5. 출퇴근상태 변경하기\n" + "\t6. 출퇴근상태 입력하기\n"
+					+ "\n원하는 메뉴를 선택하세요: ");
+			BW.flush();
+
+			switch (BR.readLine().trim()) {
+			case "0":
+				return;
+			case "1":
+				goWork();
+				break;
+			case "2":
+				leaveWork();
+				break;
+			case "3":
+				selectBy();
+				break;
+			case "4":
+//				selectByIDAtt();
+				break;
+			case "5":
+//				modAttType();
+				break;
+			case "6":
+//				addAttType();
+				break;
+			default:
+				BW.write("잘못된 입력입니다.\n\n");
+				break;
+			}
+
+		}
 
 	}
 
 	public void goWork() throws SQLException, IOException {
-
 		LocalTime time = LocalTime.now();
 		LocalTime stime = LocalTime.parse("09:00:00");
 //		LocalTime etime = LocalTime.parse("18:00:00");
@@ -199,7 +239,7 @@ public class AttServiceImpl implements AttService {
 
 	public void selectByIDAtt() throws SQLException, IOException {
 
-		pstmt = conn.prepareStatement("SELECT usrID FROM Att WHERE usrID = ?");
+		pstmt = conn.prepareStatement("SELECT * from Att WHERE usrID = ?");
 		BW.write("조회하고 싶은 ID 입력: ");
 		BW.flush();
 		String searchID = BR.readLine();
@@ -278,19 +318,20 @@ public class AttServiceImpl implements AttService {
 	}
 
 	public void addAttType() throws SQLException, IOException {
-		String sql = "INSERT INTO Att(attID,ATTDATE, USRID, attTYPE) VALUES (Autorecord.nextval, to_char(sysdate, 'yyyy-MM-DD'), ?, ?)";		
+		String sql = "INSERT INTO Att(attID,ATTDATE, USRID, attTYPE) VALUES (Autorecord.nextval, to_char(sysdate, 'yyyy-MM-DD'), ?, ?)";
 		BW.write("usr id를 입력해주세요. ");
 		BW.flush();
 		String str = BR.readLine();
 
-		if(!searchUsr(str)) {
+		if (!searchUsr(str)) {
 			BW.write("등록되지 않은 ID입니다.");
 			BW.flush();
 			return;
 		}
 		pstmt = conn.prepareStatement(sql);
-		
-		BW.write("출퇴근 상태를 입력해주세요.\tex) 결근, 휴가");
+
+		BW.write("출퇴근 상태를 입력해주세요.\tex) 결근, 휴가\n");
+		BW.flush();
 		
 		pstmt.setString(1, str);
 		pstmt.setString(2, BR.readLine());
@@ -298,9 +339,62 @@ public class AttServiceImpl implements AttService {
 		log.info("AttType INSERT COMPLETE\n");
 		BW.write("출퇴근 상태 입력이 완료 되었습니다.\n");
 		BW.flush();
-	}	
+	
 }
+	public void selectBy() throws SQLException, IOException {
+		pstmt = conn.prepareStatement("SELECT * FROM Att WHERE usrID = ?");
+		System.out.println(usrID);
+		pstmt.setString(1, usrID);
+		rs = pstmt.executeQuery();
 
+		ArrayList<AttDTO> list = new ArrayList<>();
+
+		while (rs.next()) {
+			AttDTO ad = new AttDTO();
+			
+			ad.setAttID(rs.getInt(1));
+			ad.setAttDate(rs.getDate(2));
+			ad.setStartTime(rs.getTimestamp(3));
+			ad.setEndTime(rs.getTimestamp(4));
+			ad.setUsrID(rs.getString(5));
+			ad.setAttType(rs.getString(6));
+			list.add(ad);
+		}
+
+		if (list.isEmpty()) {
+			BW.write("해당 ID의 출퇴근기록이 존재하지 않습니다.\n\n");
+			BW.flush();
+			return;
+		}
+
+		BW.write("=======================================================\n");
+		BW.write("<출근날짜>\t<출근시간>\t<퇴근시간>\t<ID>\t\t<출퇴근상태>\n");
+
+		for (AttDTO attDTO : list) {
+			StringTokenizer st;
+
+			st = new StringTokenizer(String.valueOf(attDTO.getStartTime()));
+
+			st.nextToken();
+			String str1 = st.nextToken().substring(0, 8);
+
+			if (attDTO.getEndTime() != null) {
+				st = new StringTokenizer(String.valueOf(attDTO.getEndTime()));
+				st.nextToken();
+				String str2 = st.nextToken().substring(0, 8);
+				BW.write(attDTO.getAttDate() + "\t" + str1 + "\t" + str2 + "\t" + attDTO.getUsrID() + "\t"
+						+ attDTO.getAttType() + "\n");
+			} else
+				BW.write(attDTO.getAttDate() + "\t" + str1 + "\t" + "\t\t" + attDTO.getUsrID() + "\t"
+						+ attDTO.getAttType() + "\n");
+
+		}
+		BW.write("=======================================================\n");
+		BW.flush();
+	}
+	
+	    
+}
 //	public void insertRandom() throws SQLException {
 //		pstmt = conn.prepareStatement(
 //				"INSERT INTO Att(attID,ATTDATE, STARTTIME, USRID, ATTTYPE) VALUES (Autorecord.nextval, ?, ?, ?, ?)");
