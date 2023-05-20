@@ -91,7 +91,7 @@ public class UsrServiceImpl implements UsrService {
                 dataId = list.get(0).getUsrID();
             }
 
-            if (!Validation.ValidateId(cId)) {
+            if (!Validation.validateId(cId)) {
                 BW.write("아이디는 영문 대소문자, 숫자 1자 이상으로 5자 ~ 11자 사이에서 만들 수 있습니다.\n");
                 BW.flush();
                 continue;
@@ -107,7 +107,7 @@ public class UsrServiceImpl implements UsrService {
             BW.flush();
             String cPw = BR.readLine();
 
-            if (!Validation.ValidatePw(cPw)) {
+            if (!Validation.validatePw(cPw)) {
                 BW.write("비밀번호는 8자이상 영문, 숫자, 특수문자를 포함해야 합니다.\n");
                 BW.flush();
                 continue;
@@ -143,12 +143,12 @@ public class UsrServiceImpl implements UsrService {
         BW.write("귀하의 생년월일 : ");
         BW.write("1900-11-22 형식으로 입력 바랍니다.\n");
         BW.flush();
-        String birthday = null;
 
+        String birthday;
         while (true) {
             birthday = BR.readLine();
 
-            if (!Validation.ValidateDate(birthday)) {
+            if (!Validation.validateDate(birthday)) {
                 BW.write("1900-11-22 형식으로 입력 바랍니다.\n");
                 BW.flush();
             } else {
@@ -172,10 +172,17 @@ public class UsrServiceImpl implements UsrService {
             BW.flush();
         }
 
-        BW.write("귀하의 연락처 : ");
-        BW.flush();
-
-        String contact = BR.readLine();
+        String contact;
+        while (true) {
+            BW.write("귀하의 연락처 : ");
+            BW.flush();
+            contact = BR.readLine();
+            if (Validation.validateContact(contact)) {
+                break;
+            } else {
+                BW.write("잘못 입력하셨습니다. '010-xxxx-xxxx' 형식으로 입력해주세요.\n");
+            }
+        }
 
         pstmtInsert.setString(1, id);
         pstmtInsert.setString(2, name);

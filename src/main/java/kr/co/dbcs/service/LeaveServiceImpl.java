@@ -114,7 +114,7 @@ public class LeaveServiceImpl implements LeaveService {
         while (true) {
             startDate = BR.readLine();
 
-            if (!Validation.ValidateDate(startDate)) {
+            if (!Validation.validateDate(startDate)) {
                 BW.write("YYYY-MM-DD 형식으로 입력 바랍니다.\n");
                 BW.flush();
             } else {
@@ -130,7 +130,7 @@ public class LeaveServiceImpl implements LeaveService {
         while (true) {
             endDate = BR.readLine();
 
-            if (!Validation.ValidateDate(endDate)) {
+            if (!Validation.validateDate(endDate)) {
                 BW.write("YYYY-MM-DD 형식으로 입력 바랍니다.\n");
                 BW.flush();
             } else {
