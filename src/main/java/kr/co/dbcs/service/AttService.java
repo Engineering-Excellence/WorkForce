@@ -20,4 +20,8 @@ public interface AttService {
     public void selectAllAtt() throws SQLException, IOException;
     
     public void selectBy() throws SQLException, IOException;
+    
+    public void selectMonth() throws IOException, SQLException;
+    
+    public void adminSelectMonth() throws IOException, SQLException;
 }
