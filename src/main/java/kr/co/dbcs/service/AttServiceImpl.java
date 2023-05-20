@@ -25,10 +25,8 @@ public class AttServiceImpl implements AttService {
 	private PreparedStatement pstmt;
 	private ResultSet rs;
 	private String usrID;
-//	private static String usrID = "jaejin1112";
 
-	
-	public AttServiceImpl(String usrID2) throws SQLException{
+	public AttServiceImpl(String usrID2) throws SQLException {
 		usrID = usrID2;
 	}
 
@@ -36,9 +34,9 @@ public class AttServiceImpl implements AttService {
 	public void attAdminMenu() throws IOException, SQLException {
 		while (true) {
 
-			BW.write("-=-=-=-=-= JDBC Query =-=-=-=-=-\n" + "\t0. 출퇴근메뉴 종료\n" + "\t1. 출근하기\n" + "\t2. 퇴근하기\n"
+			BW.write("\n-=-=-=-=-= <출퇴근 기록 관리자 메뉴> =-=-=-=-=-\n" + "\t0. 출퇴근메뉴 종료\n" + "\t1. 출근하기\n" + "\t2. 퇴근하기\n"
 					+ "\t3. 출퇴근기록 전체 확인\n" + "\t4. 출퇴근기록 ID로 검색\n" + "\t5. 출퇴근상태 변경하기\n" + "\t6. 출퇴근상태 입력하기\n"
-					+ "\n원하는 메뉴를 선택하세요: ");
+					+ "\t7. 월별 근태기록 ID로 검색\n" + "\n원하는 메뉴를 선택하세요: ");
 			BW.flush();
 
 			switch (BR.readLine().trim()) {
@@ -62,8 +60,12 @@ public class AttServiceImpl implements AttService {
 			case "6":
 				addAttType();
 				break;
+			case "7":
+				adminSelectMonth();
+				break;
 			default:
 				BW.write("잘못된 입력입니다.\n\n");
+				BW.flush();
 				break;
 			}
 
@@ -75,9 +77,8 @@ public class AttServiceImpl implements AttService {
 
 		while (true) {
 
-			BW.write("-=-=-=-=-= JDBC Query =-=-=-=-=-\n" + "\t0. 출퇴근메뉴 종료\n" + "\t1. 출근하기\n" + "\t2. 퇴근하기\n"
-					+ "\t3. 출퇴근기록 확인\n" + "\t4. 출퇴근기록 ID로 검색\n" + "\t5. 출퇴근상태 변경하기\n" + "\t6. 출퇴근상태 입력하기\n"
-					+ "\n원하는 메뉴를 선택하세요: ");
+			BW.write("\n-=-=-=-=-= <출퇴근 기록 근로자 메뉴> =-=-=-=-=-\n" + "\t0. 출퇴근메뉴 종료\n" + "\t1. 출근하기\n" + "\t2. 퇴근하기\n"
+					+ "\t3. 출퇴근기록 확인\n" + "\t4. 월별 근태기록 확인\n" + "\n원하는 메뉴를 선택하세요: ");
 			BW.flush();
 
 			switch (BR.readLine().trim()) {
@@ -93,16 +94,11 @@ public class AttServiceImpl implements AttService {
 				selectBy();
 				break;
 			case "4":
-//				selectByIDAtt();
-				break;
-			case "5":
-//				modAttType();
-				break;
-			case "6":
-//				addAttType();
+				selectMonth();
 				break;
 			default:
 				BW.write("잘못된 입력입니다.\n\n");
+				BW.flush();
 				break;
 			}
 
@@ -113,7 +109,6 @@ public class AttServiceImpl implements AttService {
 	public void goWork() throws SQLException, IOException {
 		LocalTime time = LocalTime.now();
 		LocalTime stime = LocalTime.parse("09:00:00");
-//		LocalTime etime = LocalTime.parse("18:00:00");
 
 		if (searchUsr(usrID) && !searchAtt(usrID)) {
 
@@ -148,9 +143,6 @@ public class AttServiceImpl implements AttService {
 
 	public void leaveWork() throws SQLException, IOException {
 
-//		bw.write("usrID를 입력하세요.");
-//		bw.flush();
-//		usrID = br.readLine();
 		LocalTime time = LocalTime.now();
 		LocalTime etime = LocalTime.parse("18:00:00");
 
@@ -322,7 +314,13 @@ public class AttServiceImpl implements AttService {
 		String str = BR.readLine();
 
 		if (!searchUsr(str)) {
-			BW.write("등록되지 않은 ID입니다.");
+			BW.write("등록되지 않은 ID입니다.\n");
+			BW.flush();
+			return;
+		}
+
+		if (searchAtt(str)) {
+			BW.write("이미 출퇴근 기록이 입력되어있습니다.\n");
 			BW.flush();
 			return;
 		}
@@ -330,15 +328,16 @@ public class AttServiceImpl implements AttService {
 
 		BW.write("출퇴근 상태를 입력해주세요.\tex) 결근, 휴가\n");
 		BW.flush();
-		
+
 		pstmt.setString(1, str);
 		pstmt.setString(2, BR.readLine());
 		pstmt.executeUpdate();
 		log.info("AttType INSERT COMPLETE\n");
 		BW.write("출퇴근 상태 입력이 완료 되었습니다.\n");
 		BW.flush();
-	
-}
+
+	}
+
 	public void selectBy() throws SQLException, IOException {
 		pstmt = conn.prepareStatement("SELECT * FROM Att WHERE usrID = ?");
 		System.out.println(usrID);
@@ -349,7 +348,7 @@ public class AttServiceImpl implements AttService {
 
 		while (rs.next()) {
 			AttDTO ad = new AttDTO();
-			
+
 			ad.setAttID(rs.getInt(1));
 			ad.setAttDate(rs.getDate(2));
 			ad.setStartTime(rs.getTimestamp(3));
@@ -390,18 +389,171 @@ public class AttServiceImpl implements AttService {
 		BW.write("=======================================================\n");
 		BW.flush();
 	}
-	
-	    
+
+	public void selectMonth() throws IOException, SQLException {
+		String sql1 = "SELECT ATTID from ATT WHERE ATTDATE >= TO_DATE(?, 'YYYYMMDD') AND ATTDATE < TO_DATE(?, 'YYYYMMDD') and usrID= ? and ATTTYPE= '지각'";
+		String sql2 = "SELECT ATTID from ATT WHERE ATTDATE >= TO_DATE(?, 'YYYYMMDD') AND ATTDATE < TO_DATE(?, 'YYYYMMDD') and usrID= ? and ATTTYPE= '결근'";
+		String sql3 = "SELECT ATTID from ATT WHERE ATTDATE >= TO_DATE(?, 'YYYYMMDD') AND ATTDATE < TO_DATE(?, 'YYYYMMDD') and usrID= ? and ATTTYPE= '휴가'";
+		PreparedStatement pstmt = null;
+
+		BW.write("이번년도에서 근퇴기록을 조회하고 싶은 월의 숫자를 입력해주세요.\tex)1, 2, 3, 4, 5");
+		BW.flush();
+		String month = BR.readLine();
+
+		String startDay = "";
+		String endDay = "";
+		int count = 0;
+		StringBuilder sb = new StringBuilder();
+
+		switch (month) {
+		case "1":
+			startDay = "20230101";
+			endDay = "20230201";
+			break;
+		case "2":
+			startDay = "20230201";
+			endDay = "20230301";
+			break;
+		case "3":
+			startDay = "20230301";
+			endDay = "20230401";
+			break;
+		case "4":
+			startDay = "20230401";
+			endDay = "20230501";
+			break;
+		case "5":
+			startDay = "20230501";
+			endDay = "20230601";
+			break;
+		default:
+			BW.write("잘못된 값을 입력하셨습니다.\n");
+			BW.flush();
+			return;
+		}
+		pstmt = conn.prepareStatement(sql1);
+		pstmt.setString(1, startDay);
+		pstmt.setString(2, endDay);
+		pstmt.setString(3, usrID);
+		rs = pstmt.executeQuery();
+		while (rs.next()) {
+			count++;
+		}
+		sb.append("\n<5월 " + usrID + "님의 근태기록>\n");
+		sb.append("지각:" + count + " 회\t");
+
+		count = 0;
+		pstmt = conn.prepareStatement(sql2);
+		pstmt.setString(1, startDay);
+		pstmt.setString(2, endDay);
+		pstmt.setString(3, usrID);
+		rs = pstmt.executeQuery();
+		while (rs.next()) {
+			count++;
+		}
+		sb.append("결근:" + count + " 회\t");
+
+		count = 0;
+		pstmt = conn.prepareStatement(sql3);
+		pstmt.setString(1, startDay);
+		pstmt.setString(2, endDay);
+		pstmt.setString(3, usrID);
+		rs = pstmt.executeQuery();
+		while (rs.next()) {
+			count++;
+		}
+		sb.append("휴가:" + count + " 회\n");
+		sb.append("==========================================\n");
+
+		BW.write(sb.toString());
+		BW.flush();
+	}
+
+	public void adminSelectMonth() throws IOException, SQLException {
+		String sql1 = "SELECT ATTID from ATT WHERE ATTDATE >= TO_DATE(?, 'YYYYMMDD') AND ATTDATE < TO_DATE(?, 'YYYYMMDD') and usrID= ? and ATTTYPE= '지각'";
+		String sql2 = "SELECT ATTID from ATT WHERE ATTDATE >= TO_DATE(?, 'YYYYMMDD') AND ATTDATE < TO_DATE(?, 'YYYYMMDD') and usrID= ? and ATTTYPE= '결근'";
+		String sql3 = "SELECT ATTID from ATT WHERE ATTDATE >= TO_DATE(?, 'YYYYMMDD') AND ATTDATE < TO_DATE(?, 'YYYYMMDD') and usrID= ? and ATTTYPE= '휴가'";
+		PreparedStatement pstmt = null;
+		BW.write("근퇴기록을 조회할 ID를 입력해주세요.");
+		BW.flush();
+		String usrID = BR.readLine();
+		if (!searchUsr(usrID)) {
+			BW.write("등록된 ID가 아닙니다.");
+			BW.flush();
+			return;
+		}
+
+		BW.write("이번년도에서 근퇴기록을 조회하고 싶은 월의 숫자를 입력해주세요.\tex)1, 2, 3, 4, 5");
+		BW.flush();
+		String month = BR.readLine();
+
+		String startDay = "";
+		String endDay = "";
+		int count = 0;
+		StringBuilder sb = new StringBuilder();
+
+		switch (month) {
+		case "1":
+			startDay = "20230101";
+			endDay = "20230201";
+			break;
+		case "2":
+			startDay = "20230201";
+			endDay = "20230301";
+			break;
+		case "3":
+			startDay = "20230301";
+			endDay = "20230401";
+			break;
+		case "4":
+			startDay = "20230401";
+			endDay = "20230501";
+			break;
+		case "5":
+			startDay = "20230501";
+			endDay = "20230601";
+			break;
+		default:
+			BW.write("잘못된 값을 입력하셨습니다.\n");
+			BW.flush();
+			return;
+		}
+		pstmt = conn.prepareStatement(sql1);
+		pstmt.setString(1, startDay);
+		pstmt.setString(2, endDay);
+		pstmt.setString(3, usrID);
+		rs = pstmt.executeQuery();
+		while (rs.next()) {
+			count++;
+		}
+		sb.append("\n<5월 " + usrID + "님의 근태기록>\n");
+		sb.append("지각:" + count + " 회\t");
+
+		count = 0;
+		pstmt = conn.prepareStatement(sql2);
+		pstmt.setString(1, startDay);
+		pstmt.setString(2, endDay);
+		pstmt.setString(3, usrID);
+		rs = pstmt.executeQuery();
+		while (rs.next()) {
+			count++;
+		}
+		sb.append("결근:" + count + " 회\t");
+
+		count = 0;
+		pstmt = conn.prepareStatement(sql3);
+		pstmt.setString(1, startDay);
+		pstmt.setString(2, endDay);
+		pstmt.setString(3, usrID);
+		rs = pstmt.executeQuery();
+		while (rs.next()) {
+			count++;
+		}
+		sb.append("휴가:" + count + " 회\n");
+		sb.append("==========================================\n");
+
+		BW.write(sb.toString());
+		BW.flush();
+	}
+
 }
-//	public void insertRandom() throws SQLException {
-//		pstmt = conn.prepareStatement(
-//				"INSERT INTO Att(attID,ATTDATE, STARTTIME, USRID, ATTTYPE) VALUES (Autorecord.nextval, ?, ?, ?, ?)");
-//		
-//		Calendar calendar = new GregorianCalendar();
-//		for (int i = 0; i < 100; i++) {
-//			LocalDate cdate = LocalDate.now();
-////			pstmt.setDate(1,);			
-//		}
-//		pstmt.setString(2, "정상출근");
-//		pstmt.executeUpdate();
-//	}
