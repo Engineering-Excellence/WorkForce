@@ -13,3 +13,5 @@ CREATE TABLE att
             REFERENCES usr (usrid),
             atttype VARCHAR2(20)
 );
+
+CREATE SEQUENCE Autorecord;

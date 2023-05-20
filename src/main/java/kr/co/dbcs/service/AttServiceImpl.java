@@ -12,11 +12,9 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.LocalTime;
 import java.util.ArrayList;
-import java.util.Scanner;
 import java.util.StringTokenizer;
 
 import kr.co.dbcs.domain.AttDTO;
-import kr.co.dbcs.domain.EmpDTO;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j

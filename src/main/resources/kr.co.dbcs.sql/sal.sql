@@ -11,3 +11,5 @@ CREATE TABLE sal
         CONSTRAINT sal_usr_usrid_fk
             REFERENCES usr (usrid)
 );
+
+ CREATE SEQUENCE Salrecord;
