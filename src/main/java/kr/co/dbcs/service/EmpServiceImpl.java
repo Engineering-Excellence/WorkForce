@@ -179,7 +179,6 @@ public class EmpServiceImpl implements EmpService {
             BW.write("현재 비밀번호를 입력하세요.: ");
             BW.flush();
             pw = BR.readLine().trim();
-
             pw_decrypt = LoginSHA.SHA512(pw, salt);
         } while (!pw_decrypt.equals(dataPw));
 
@@ -220,9 +219,9 @@ public class EmpServiceImpl implements EmpService {
             BW.write("\n======================================================================\n");
             BW.write("|\t\t     임직원근태관리 관리자 메뉴\t\t\t     |\n");
             BW.write("======================================================================\n");
-            BW.write("|\t    1. 부서이동\t\t   |\t        2. 직급관리\t     |\n");
+            BW.write("|\t    1. 직원검색\t\t   |\t        2. 부서이동\t     |\n");
             BW.write("======================================================================\n");
-            BW.write("|\t    3. 급여관리\t\t   |\t                  \t     |\n");
+            BW.write("|\t    3. 직급관리\t\t   |\t        3. 급여관리\t     |\n");
             BW.write("======================================================================\n");
             BW.write("|\t\t원하는 기능을 선택하세요.(0번 : 이전)\t\t     |\n");
             BW.write("======================================================================\n");
@@ -233,14 +232,18 @@ public class EmpServiceImpl implements EmpService {
                     // 이전 화면
                     return;
                 case "1":
+                    // 직원 검색
+                    searchEmp();
+                    break;
+                case "2":
                     // 부서 수정
                     updateDept();
                     break;
-                case "2":
+                case "3":
                     // 직급 수정
                     updatePos();
                     break;
-                case "3":
+                case "4":
                     // 기본급 수정
                     updateSal();
                     break;
@@ -261,29 +264,35 @@ public class EmpServiceImpl implements EmpService {
         pstmt.setString(1, "%" + name + "%");
         rs = pstmt.executeQuery();
 
+        BW.write("\n================================================================================================================================================\n");
+        BW.write(String.format("%22s\t%5s\t%12s\t\t%3s\t%10s\t%8s\t%11s\t%5s%8s\t\t%8s", "ID", "이름", "생년월일", "성별", "연락처", "입사일", "기본급", "잔여휴가", "부서명", "직급"));
+        BW.write("\n================================================================================================================================================\n");
+
         while (rs.next()) {
-            BW.write("사용자ID: " + rs.getString("USRID"));
-            BW.write("\t이름: " + rs.getString("NAME") + "\t");
-            BW.write("\t생년월일: " + rs.getDate("BIRTHDATE") + "\t");
-            BW.write("\t성별: " + (rs.getBoolean("GENDER") ? "남" : "여"));
-            BW.write("\t연락처: " + rs.getString("CONTACT"));
-            BW.write("\t입사일: " + rs.getDate("HIREDATE"));
-            BW.write("\t기본급: " + rs.getInt("SAL") + "\t");
-            BW.write("\t잔여휴가: " + rs.getByte("LEAVEDAY") + "\t");
             PreparedStatement subPstmt = conn.prepareStatement("SELECT DEPTNAME FROM DEPT WHERE DEPTCODE = ?");
             subPstmt.setInt(1, rs.getInt("DEPTCODE"));
             ResultSet subRs = subPstmt.executeQuery();
             subRs.next();
             String deptName = subRs.getString("DEPTNAME");
-            BW.write("\t소속부서: " + deptName);
             subPstmt = conn.prepareStatement("SELECT POSNAME FROM POS WHERE POSCODE = ?");
             subPstmt.setInt(1, rs.getInt("POSCODE"));
             subRs = subPstmt.executeQuery();
             subRs.next();
             String posName = subRs.getString("POSNAME");
-            BW.write("\t직급: " + posName);
+
+            BW.write(String.format("%22s\t%5s\t%12s\t%3s\t%15s\t%12s\t%9s\t%4s\t%10s\t%10s",
+                    rs.getString("USRID"),
+                    rs.getString("NAME"),
+                    rs.getDate("BIRTHDATE"),
+                    (rs.getBoolean("GENDER") ? "남" : "여"),
+                    rs.getString("CONTACT"),
+                    rs.getDate("HIREDATE"),
+                    rs.getInt("SAL"),
+                    rs.getByte("LEAVEDAY"),
+                    deptName,
+                    posName));
         }
-        BW.write("\n");
+        BW.write("\n================================================================================================================================================\n");
         BW.flush();
     }
 
@@ -296,12 +305,12 @@ public class EmpServiceImpl implements EmpService {
         String usrID = BR.readLine().trim();
         BW.write("변경할 부서를 입력하세요: ");
         BW.flush();
-        int deptCode = Integer.parseInt(BR.readLine().trim());
-        pstmt = conn.prepareStatement("UPDATE EMP SET DEPTCODE = ? WHERE USRID = ?");
-        pstmt.setInt(1, deptCode);
+        String deptName = BR.readLine().trim();
+        pstmt = conn.prepareStatement("UPDATE EMP SET DEPTCODE = (SELECT DEPTCODE FROM DEPT WHERE DEPTNAME = ?) WHERE USRID = ?");
+        pstmt.setString(1, deptName);
         pstmt.setString(2, usrID);
         int res = pstmt.executeUpdate();
-        if (res > 0) BW.write(usrID + "님의 부서가 변경되었습니다.\n");
+        if (res > 0) BW.write(String.format("%s님의 부서가 %s(으)로변경되었습니다.%n", usrID, deptName));
     }
 
     @Override
@@ -313,12 +322,12 @@ public class EmpServiceImpl implements EmpService {
         String usrID = BR.readLine().trim();
         BW.write("변경할 직급을 입력하세요: ");
         BW.flush();
-        int posCode = Integer.parseInt(BR.readLine().trim());
-        pstmt = conn.prepareStatement("UPDATE EMP SET POSCODE = ? WHERE USRID = ?");
-        pstmt.setInt(1, posCode);
+        String posName = BR.readLine().trim();
+        pstmt = conn.prepareStatement("UPDATE EMP SET POSCODE = (SELECT POSCODE FROM POS WHERE POSNAME = ?) WHERE USRID = ?");
+        pstmt.setString(1, posName);
         pstmt.setString(2, usrID);
         int res = pstmt.executeUpdate();
-        if (res > 0) BW.write(usrID + "님의 직급이 변경되었습니다.\n");
+        if (res > 0) BW.write(String.format("%s님의 직급이 %s(으)로변경되었습니다.%n", usrID, posName));
     }
 
     @Override
@@ -335,6 +344,6 @@ public class EmpServiceImpl implements EmpService {
         pstmt.setInt(1, sal);
         pstmt.setString(2, usrID);
         int res = pstmt.executeUpdate();
-        if (res > 0) BW.write(usrID + "님의 기본급이 변경되었습니다.\n");
+        if (res > 0) BW.write(String.format("%s님의 기본급이 %d(으)로변경되었습니다.%n", usrID, sal));
     }
 }
