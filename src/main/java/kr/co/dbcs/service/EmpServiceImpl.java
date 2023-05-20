@@ -9,6 +9,8 @@ import lombok.extern.slf4j.Slf4j;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 import static kr.co.dbcs.util.JdbcManager.*;
 
@@ -37,7 +39,7 @@ public class EmpServiceImpl implements EmpService {
             BW.write("======================================================================\n");
             BW.write("|\t    3. 휴가신청\t\t    \t                  \t     |\n");
             BW.write("======================================================================\n");
-            BW.write("|\t\t원하는 기능을 선택하세요.(0번 : 종료)\t\t     |\n");
+            BW.write("|\t\t원하는 기능을 선택하세요.(0번 : 이전)\t\t     |\n");
             BW.write("======================================================================\n");
             BW.flush();
 
@@ -54,16 +56,17 @@ public class EmpServiceImpl implements EmpService {
                     BW.flush();
                     return;
                 case "1":
+                    // 근무기록
                     BW.write("출퇴근 관리 근로자 메뉴로 이동합니다.\n");
                     BW.flush();
                     new AttServiceImpl(usrDTO.getUsrID()).attMenu();
-                    // 출퇴근 확인
                     break;
                 case "2":
                     // 인적사항
                     showEmpInfo();
                     break;
                 case "3":
+                    // 휴가신청
                     new LeaveServiceImpl(usrDTO.getUsrID()).leaveEmp();
                     break;
                 default:
@@ -131,7 +134,7 @@ public class EmpServiceImpl implements EmpService {
         BW.write("======================================================================\n");
         BW.write("|\t    1. 비밀번호 수정\t\t   |\t        2. 연락처 수정\t     |\n");
         BW.write("======================================================================\n");
-        BW.write("|\t\t원하는 기능을 선택하세요.(0번 : 종료)\t\t     |\n");
+        BW.write("|\t\t원하는 기능을 선택하세요.(0번 : 이전)\t\t     |\n");
         BW.write("======================================================================\n");
         BW.flush();
 
@@ -139,9 +142,11 @@ public class EmpServiceImpl implements EmpService {
             case "0":
                 return;
             case "1":
+                // 비밀번호 수정
                 updatePw(usrDTO.getUsrID());
                 break;
             case "2":
+                // 연락처 수정
                 updateContact(usrDTO.getUsrID());
                 break;
             default:
@@ -206,7 +211,7 @@ public class EmpServiceImpl implements EmpService {
             BW.write("======================================================================\n");
             BW.write("|\t    3. 급여관리\t\t   |\t                  \t     |\n");
             BW.write("======================================================================\n");
-            BW.write("|\t원하는 기능을 선택하세요.(0번 : 홈화면으로 돌아가기)\t     |\n");
+            BW.write("|\t\t원하는 기능을 선택하세요.(0번 : 이전)\t\t     |\n");
             BW.write("======================================================================\n");
             BW.flush();
 
@@ -233,42 +238,70 @@ public class EmpServiceImpl implements EmpService {
         }
     }
 
-    private void searchEmp() {
+    private void searchEmp() throws IOException, SQLException {
 
+        BW.write("검색할 직원의 이름을 입력하세요.: ");
+        BW.flush();
+        String name = BR.readLine().trim();
+        pstmt = conn.prepareStatement("SELECT * FROM emp WHERE name LIKE ?");
+//        pstmt.setString(1, "'%" + name + "%'");
+        pstmt.setString(1, "%" + name + "%");
+        rs = pstmt.executeQuery();
+
+        List<EmpDTO> empList = new ArrayList<>();
+        while (rs.next()) {
+            EmpDTO dto = new EmpDTO();
+            dto.setUsrID(rs.getString(1));
+            dto.setName(rs.getString(2));
+            dto.setBirthDate(rs.getDate(3));
+            dto.setGender(rs.getBoolean(4));
+            dto.setContact(rs.getString(5));
+            dto.setHireDate(rs.getDate(6));
+            dto.setSal(rs.getInt(7));
+            dto.setLeaveDay(rs.getByte(8));
+            dto.setDeptCode(rs.getInt(9));
+            dto.setPosCode(rs.getInt(10));
+            empList.add(dto);
+        }
+
+        BW.write(empList + "\n");
     }
 
     private void updateDept() throws SQLException, IOException, NumberFormatException {
 
+        searchEmp();
         BW.write("부서를 이동할 직원 ID를 입력하세요.: ");
         BW.flush();
         String usrID = BR.readLine().trim();
         BW.write("변경할 부서를 입력하세요: ");
         BW.flush();
-        int deptCode = Integer.parseInt(BR.readLine());
+        int deptCode = Integer.parseInt(BR.readLine().trim());
         pstmt = conn.prepareStatement("UPDATE EMP SET DEPTCODE = ? WHERE USRID = ?");
         pstmt.setInt(1, deptCode);
         pstmt.setString(2, usrID);
-        pstmt.executeUpdate();
-        BW.write(usrID + "님의 부서가 변경되었습니다.\n");
+        int res = pstmt.executeUpdate();
+        if (res > 0) BW.write(usrID + "님의 부서가 변경되었습니다.\n");
     }
 
     private void updatePos() throws SQLException, IOException {
 
+        searchEmp();
         BW.write("직급을 변경할 직원 ID를 입력하세요.: ");
         BW.flush();
         String usrID = BR.readLine().trim();
         BW.write("변경할 직급을 입력하세요: ");
         BW.flush();
-        int posCode = Integer.parseInt(BR.readLine());
+        int posCode = Integer.parseInt(BR.readLine().trim());
         pstmt = conn.prepareStatement("UPDATE EMP SET POSCODE = ? WHERE USRID = ?");
         pstmt.setInt(1, posCode);
         pstmt.setString(2, usrID);
-        pstmt.executeUpdate();
-        BW.write(usrID + "님의 직급이 변경되었습니다.\n");
+        int res = pstmt.executeUpdate();
+        if (res > 0) BW.write(usrID + "님의 직급이 변경되었습니다.\n");
     }
 
     private void updateSal() throws SQLException, IOException {
 
+        searchEmp();
         BW.write("기본급을 변경할 직원 ID를 입력하세요.: ");
         BW.flush();
         String usrID = BR.readLine().trim();
@@ -277,8 +310,8 @@ public class EmpServiceImpl implements EmpService {
         int sal = Integer.parseInt(BR.readLine().trim());
         pstmt = conn.prepareStatement("UPDATE EMP SET SAL = ? WHERE USRID = ?");
         pstmt.setInt(1, sal);
-        pstmt.setString(2, BR.readLine().trim());
-        pstmt.executeUpdate();
-        BW.write(usrID + "님의 기본급이 변경되었습니다.\n");
+        pstmt.setString(2, usrID);
+        int res = pstmt.executeUpdate();
+        if (res > 0) BW.write(usrID + "님의 기본급이 변경되었습니다.\n");
     }
 }
