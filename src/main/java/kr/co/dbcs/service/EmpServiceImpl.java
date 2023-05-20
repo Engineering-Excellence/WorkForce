@@ -224,7 +224,7 @@ public class EmpServiceImpl implements EmpService {
                     // 직급 수정
                     BW.write("직급을 변경할 직원 ID를 입력하세요.: ");
                     BW.flush();
-//                    updatePos(BR.readLine());
+                    updatePos(BR.readLine());
                     break;
                 case "3":
                     // 기본급 수정
@@ -252,6 +252,11 @@ public class EmpServiceImpl implements EmpService {
 
     private void updatePos(String usrID) throws SQLException, IOException {
 
+        pstmt = conn.prepareStatement("UPDATE EMP SET POSCODE = ? WHERE USRID = '" + usrID + "'");
+        BW.write("변경할 직급을 입력하세요: ");
+        BW.flush();
+        pstmt.setString(1, BR.readLine().trim());
+        pstmt.executeUpdate();
     }
 
     private void updateSal(String usrID) {
