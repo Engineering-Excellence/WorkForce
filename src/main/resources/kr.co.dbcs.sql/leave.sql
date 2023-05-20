@@ -16,3 +16,5 @@ CREATE TABLE leave
         CONSTRAINT leave_leavetype_leavetypeid_fk
             REFERENCES leavetype (leavetypeid)
 );
+
+CREATE SEQUENCE leaveID;
