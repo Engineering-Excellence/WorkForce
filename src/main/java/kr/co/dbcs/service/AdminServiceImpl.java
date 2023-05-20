@@ -29,7 +29,7 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public void adminMenu() throws IOException, SQLException, ParseException {
+    public void adminMenu() throws IOException, SQLException, ParseException, ClassNotFoundException {
     	while(true) {
     		showMenu();
     		
@@ -51,6 +51,7 @@ public class AdminServiceImpl implements AdminService {
                 break;
             case "3":
                 // 휴가관리
+            	new LeaveServiceImpl().leaveAdmin();
                 break;
             case "4":
                 // 급여관리

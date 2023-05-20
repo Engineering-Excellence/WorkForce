@@ -6,7 +6,7 @@ import java.text.ParseException;
 
 public interface AdminService {
 
-    void adminMenu() throws IOException, SQLException, ParseException;
+    void adminMenu() throws IOException, SQLException, ParseException, ClassNotFoundException;
 
     void showMenu() throws IOException;
 }

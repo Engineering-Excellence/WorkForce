@@ -32,9 +32,9 @@ public class EmpServiceImpl implements EmpService {
         while (true) {
 
             BW.write("\n======================================================================\n");
-            BW.write("|\t\t\t임직원근태관리 근로자 메뉴\t\t\t     |\n");
+            BW.write("|\t\t\t임직원근태관리 근로자 메뉴\t\t     |\n");
             BW.write("======================================================================\n");
-            BW.write("|\t    1. 출퇴근 기록\t\t   |\t        2. 인적사항\t     |\n");
+            BW.write("|  1. 출퇴근 기록 \t|  2. 인적사항 \t|  3. 휴가 관리              |\n");
             BW.write("======================================================================\n");
             BW.write("|\t\t원하는 기능을 선택하세요.(0번 : 종료)\t\t     |\n");
             BW.write("======================================================================\n");
@@ -65,7 +65,7 @@ public class EmpServiceImpl implements EmpService {
                     showEmpInfo();
                     break;
                 case "3":
-                    new LeaveServiceImpl().leaveMenu();
+                    new LeaveServiceImpl().leaveEmp();
                     break;
                 default:
                     BW.write("잘못된 입력입니다.\n");
