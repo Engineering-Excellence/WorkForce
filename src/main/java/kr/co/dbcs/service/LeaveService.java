@@ -17,9 +17,9 @@ public interface LeaveService {
 	
 	void leaveUpdate() throws IOException, SQLException ;
 	
-	void leaveType() throws IOException;
-	
 	void leaveselectAll() throws IOException, SQLException;
 	
-	public void approveLeave() throws IOException, SQLException;
+	public void leaveApprove() throws IOException, SQLException;
+	
+	public void leaveCheck() throws SQLException, IOException;
 }

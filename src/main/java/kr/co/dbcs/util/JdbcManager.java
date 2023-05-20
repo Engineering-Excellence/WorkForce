@@ -17,9 +17,9 @@ import java.sql.Statement;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class JdbcManager {
 
-//    private static final String URL = "jdbc:oracle:thin:@192.168.0.30:1521:orcl?useUnicode=true&characterEncoding=utf8";
+    private static final String URL = "jdbc:oracle:thin:@192.168.0.30:1521:orcl?useUnicode=true&characterEncoding=utf8";
 //    private static final String URL = "jdbc:oracle:thin:@127.0.0.1:1521:orcl?useUnicode=true&characterEncoding=utf8";
-    private static final String URL = "jdbc:oracle:thin:@127.0.0.1:1521:XE?useUnicode=true&characterEncoding=utf8";
+//    private static final String URL = "jdbc:oracle:thin:@127.0.0.1:1521:XE?useUnicode=true&characterEncoding=utf8";
     private static final String USERNAME = "workforce";
     private static final String PASSWORD = "workforce";
 
