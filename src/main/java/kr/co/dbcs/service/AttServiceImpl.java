@@ -34,9 +34,9 @@ public class AttServiceImpl implements AttService {
 	public void attAdminMenu() throws IOException, SQLException {
 		while (true) {
 
-			BW.write("\n-=-=-=-=-= <출퇴근 기록 관리자 메뉴> =-=-=-=-=-\n" + "\t0. 출퇴근메뉴 종료\n" + "\t1. 출근하기\n" + "\t2. 퇴근하기\n"
-					+ "\t3. 출퇴근기록 전체 확인\n" + "\t4. 출퇴근기록 ID로 검색\n" + "\t5. 출퇴근상태 변경하기\n" + "\t6. 출퇴근상태 입력하기\n"
-					+ "\t7. 월별 근태기록 ID로 검색\n" + "\n원하는 메뉴를 선택하세요: ");
+			BW.write("\n-=-=-=-=-= <출퇴근 기록 관리자 메뉴> =-=-=-=-=-\n" + "\t0. 출퇴근 메뉴 종료\n" + "\t1. 출근하기\n" + "\t2. 퇴근하기\n"
+					+ "\t3. 출퇴근 기록 전체 확인\n" + "\t4. 출퇴근 기록 ID로 검색\n" + "\t5. 출퇴근 상태 변경하기\n" + "\t6. 출퇴근 상태 입력하기\n"
+					+ "\t7. 월별 근태 기록 ID로 검색\n" + "\n원하는 메뉴를 선택하세요: ");
 			BW.flush();
 
 			switch (BR.readLine().trim()) {
@@ -77,8 +77,8 @@ public class AttServiceImpl implements AttService {
 
 		while (true) {
 
-			BW.write("\n-=-=-=-=-= <출퇴근 기록 근로자 메뉴> =-=-=-=-=-\n" + "\t0. 출퇴근메뉴 종료\n" + "\t1. 출근하기\n" + "\t2. 퇴근하기\n"
-					+ "\t3. 출퇴근기록 확인\n" + "\t4. 월별 근태기록 확인\n" + "\n원하는 메뉴를 선택하세요: ");
+			BW.write("\n-=-=-=-=-= <출퇴근 기록 근로자 메뉴> =-=-=-=-=-\n" + "\t0. 출퇴근 메뉴 종료\n" + "\t1. 출근하기\n" + "\t2. 퇴근하기\n"
+					+ "\t3. 출퇴근 기록 확인\n" + "\t4. 월별 출퇴근 기록 조회\n" + "\n원하는 메뉴를 선택하세요: ");
 			BW.flush();
 
 			switch (BR.readLine().trim()) {
@@ -123,9 +123,8 @@ public class AttServiceImpl implements AttService {
 				log.info("goWork INSERT COMPLETE\n");
 			} else {
 				pstmt = conn.prepareStatement(
-						"INSERT INTO Att(attID,ATTDATE, STARTTIME, USRID, ATTTYPE) VALUES (Autorecord.nextval, to_char(sysdate, 'YYYY-MM-DD'), SYSTIMESTAMP,?,?)");
+						"INSERT INTO Att(attID,ATTDATE, STARTTIME, USRID) VALUES (Autorecord.nextval, to_char(sysdate, 'YYYY-MM-DD'), SYSTIMESTAMP,?)");
 				pstmt.setString(1, usrID);
-				pstmt.setString(2, "정상출근");
 				pstmt.executeUpdate();
 				BW.write("출근 처리 되었습니다.\n");
 				BW.flush();
@@ -251,7 +250,7 @@ public class AttServiceImpl implements AttService {
 		}
 
 		if (list.isEmpty()) {
-			BW.write("해당 ID의 출퇴근기록이 존재하지 않습니다.\n\n");
+			BW.write("해당 ID의 출퇴근 기록이 존재하지 않습니다.\n\n");
 			BW.flush();
 			return;
 		}
@@ -295,7 +294,7 @@ public class AttServiceImpl implements AttService {
 			return;
 		}
 
-		BW.write("출퇴근 상태를 입력해주세요.\t ex) 휴가, 조퇴, 결근\n");
+		BW.write("출퇴근 상태를 입력해주세요.\t ex) 휴가, 조퇴\n");
 		BW.flush();
 		String str = BR.readLine();
 
@@ -309,7 +308,7 @@ public class AttServiceImpl implements AttService {
 
 	public void addAttType() throws SQLException, IOException {
 		String sql = "INSERT INTO Att(attID,ATTDATE, USRID, attTYPE) VALUES (Autorecord.nextval, to_char(sysdate, 'yyyy-MM-DD'), ?, ?)";
-		BW.write("usr id를 입력해주세요. ");
+		BW.write("usrID를 입력해주세요. ");
 		BW.flush();
 		String str = BR.readLine();
 
@@ -340,7 +339,6 @@ public class AttServiceImpl implements AttService {
 
 	public void selectBy() throws SQLException, IOException {
 		pstmt = conn.prepareStatement("SELECT * FROM Att WHERE usrID = ?");
-		System.out.println(usrID);
 		pstmt.setString(1, usrID);
 		rs = pstmt.executeQuery();
 
@@ -359,7 +357,7 @@ public class AttServiceImpl implements AttService {
 		}
 
 		if (list.isEmpty()) {
-			BW.write("해당 ID의 출퇴근기록이 존재하지 않습니다.\n\n");
+			BW.write("해당 ID의 출퇴근 기록이 존재하지 않습니다.\n\n");
 			BW.flush();
 			return;
 		}
@@ -396,35 +394,41 @@ public class AttServiceImpl implements AttService {
 		String sql3 = "SELECT ATTID from ATT WHERE ATTDATE >= TO_DATE(?, 'YYYYMMDD') AND ATTDATE < TO_DATE(?, 'YYYYMMDD') and usrID= ? and ATTTYPE= '휴가'";
 		PreparedStatement pstmt = null;
 
-		BW.write("이번년도에서 근퇴기록을 조회하고 싶은 월의 숫자를 입력해주세요.\tex)1, 2, 3, 4, 5");
+		BW.write("이번년도에서 근태 기록을 조회하고 싶은 월의 숫자를 입력해주세요.\tex)1, 2, 3, 4, 5");
 		BW.flush();
 		String month = BR.readLine();
 
 		String startDay = "";
 		String endDay = "";
 		int count = 0;
+		int monthnum =0;
 		StringBuilder sb = new StringBuilder();
 
 		switch (month) {
 		case "1":
 			startDay = "20230101";
 			endDay = "20230201";
+			monthnum =1;
 			break;
 		case "2":
 			startDay = "20230201";
 			endDay = "20230301";
+			monthnum =2;
 			break;
 		case "3":
 			startDay = "20230301";
 			endDay = "20230401";
+			monthnum = 3;
 			break;
 		case "4":
 			startDay = "20230401";
 			endDay = "20230501";
+			monthnum =4;
 			break;
 		case "5":
 			startDay = "20230501";
 			endDay = "20230601";
+			monthnum =5;
 			break;
 		default:
 			BW.write("잘못된 값을 입력하셨습니다.\n");
@@ -439,7 +443,7 @@ public class AttServiceImpl implements AttService {
 		while (rs.next()) {
 			count++;
 		}
-		sb.append("\n<5월 " + usrID + "님의 근태기록>\n");
+		sb.append("\n<"+monthnum+"월 " + usrID + "님의 근태 기록>\n");
 		sb.append("지각:" + count + " 회\t");
 
 		count = 0;
@@ -474,7 +478,7 @@ public class AttServiceImpl implements AttService {
 		String sql2 = "SELECT ATTID from ATT WHERE ATTDATE >= TO_DATE(?, 'YYYYMMDD') AND ATTDATE < TO_DATE(?, 'YYYYMMDD') and usrID= ? and ATTTYPE= '결근'";
 		String sql3 = "SELECT ATTID from ATT WHERE ATTDATE >= TO_DATE(?, 'YYYYMMDD') AND ATTDATE < TO_DATE(?, 'YYYYMMDD') and usrID= ? and ATTTYPE= '휴가'";
 		PreparedStatement pstmt = null;
-		BW.write("근퇴기록을 조회할 ID를 입력해주세요.");
+		BW.write("근태 기록을 조회할 ID를 입력해주세요.");
 		BW.flush();
 		String usrID = BR.readLine();
 		if (!searchUsr(usrID)) {
@@ -483,12 +487,13 @@ public class AttServiceImpl implements AttService {
 			return;
 		}
 
-		BW.write("이번년도에서 근퇴기록을 조회하고 싶은 월의 숫자를 입력해주세요.\tex)1, 2, 3, 4, 5");
+		BW.write("이번년도에서 근태 기록을 조회하고 싶은 월의 숫자를 입력해주세요.\tex)1, 2, 3, 4, 5");
 		BW.flush();
 		String month = BR.readLine();
 
 		String startDay = "";
 		String endDay = "";
+		int monthnum =0;
 		int count = 0;
 		StringBuilder sb = new StringBuilder();
 
@@ -496,22 +501,27 @@ public class AttServiceImpl implements AttService {
 		case "1":
 			startDay = "20230101";
 			endDay = "20230201";
+			monthnum =1;
 			break;
 		case "2":
 			startDay = "20230201";
 			endDay = "20230301";
+			monthnum =2;
 			break;
 		case "3":
 			startDay = "20230301";
 			endDay = "20230401";
+			monthnum =3;
 			break;
 		case "4":
 			startDay = "20230401";
 			endDay = "20230501";
+			monthnum =4;
 			break;
 		case "5":
 			startDay = "20230501";
 			endDay = "20230601";
+			monthnum =5;
 			break;
 		default:
 			BW.write("잘못된 값을 입력하셨습니다.\n");
@@ -526,7 +536,7 @@ public class AttServiceImpl implements AttService {
 		while (rs.next()) {
 			count++;
 		}
-		sb.append("\n<5월 " + usrID + "님의 근태기록>\n");
+		sb.append("\n<"+monthnum+"월 " + usrID + "님의 근태 기록>\n");
 		sb.append("지각:" + count + " 회\t");
 
 		count = 0;
