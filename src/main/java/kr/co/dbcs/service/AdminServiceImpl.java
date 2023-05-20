@@ -45,7 +45,7 @@ public class AdminServiceImpl implements AdminService {
                     break;
                 case "3":
                     // 휴가관리
-                    new LeaveServiceImpl().leaveAdmin();
+                	new LeaveServiceImpl(emp.getUsrID()).leaveAdmin();
                     break;
                 case "4":
                     // 급여관리
