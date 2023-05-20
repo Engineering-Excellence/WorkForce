@@ -6,22 +6,22 @@ import java.sql.SQLException;
 public interface AttService {
 
     void attMenu() throws IOException, SQLException;
-    
-    void attAdminMenu() throws IOException, SQLException ;
-    
-    public void goWork() throws SQLException, IOException;
 
-    public void leaveWork() throws SQLException, IOException;
+    void attAdminMenu() throws IOException, SQLException;
 
-    public boolean searchUsr(String usrID) throws SQLException;
+    void goWork() throws SQLException, IOException;
 
-    public boolean searchAtt(String usrID) throws SQLException;
+    void leaveWork() throws SQLException, IOException;
 
-    public void selectAllAtt() throws SQLException, IOException;
-    
-    public void selectBy() throws SQLException, IOException;
-    
-    public void selectMonth() throws IOException, SQLException;
-    
-    public void adminSelectMonth() throws IOException, SQLException;
+    boolean searchUsr(String usrID) throws SQLException;
+
+    boolean searchAtt(String usrID) throws SQLException;
+
+    void selectAllAtt() throws SQLException, IOException;
+
+    void selectBy() throws SQLException, IOException;
+
+    void selectMonth() throws IOException, SQLException;
+
+    void adminSelectMonth() throws IOException, SQLException;
 }

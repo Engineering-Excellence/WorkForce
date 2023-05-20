@@ -36,12 +36,9 @@ public class UsrServiceImpl implements UsrService {
     public void start() throws SQLException, IOException, NoSuchAlgorithmException, ClassNotFoundException, ParseException {
 
         while (true) {
-
             showMenu();
 
-            String menu = BR.readLine().trim();
-
-            switch (menu) {
+            switch (BR.readLine().trim()) {
                 case "0":
                     BW.write("프로그램을 종료합니다.\n");
                     BW.flush();
@@ -244,9 +241,10 @@ public class UsrServiceImpl implements UsrService {
         }
     }
 
-	@Override
-	public void showMenu() throws IOException {
-		BW.write("\n======================================================================\n");
+    @Override
+    public void showMenu() throws IOException {
+
+        BW.write("\n======================================================================\n");
         BW.write("|\t\t\t임직원근태관리 시스템\t\t\t     |\n");
         BW.write("======================================================================\n");
         BW.write("|\t    1. 회원가입\t\t   |\t        2. 로그인\t     |\n");
@@ -254,5 +252,5 @@ public class UsrServiceImpl implements UsrService {
         BW.write("|\t\t원하는 기능을 선택하세요.(0번 : 종료)\t\t     |\n");
         BW.write("======================================================================\n");
         BW.flush();
-	}
+    }
 }

@@ -16,6 +16,6 @@ public interface UsrService {
     UsrDTO signIn() throws IOException, SQLException, NoSuchAlgorithmException;
 
     void input(String id) throws IOException, SQLException;
-    
+
     void showMenu() throws IOException;
 }
