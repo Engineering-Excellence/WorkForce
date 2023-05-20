@@ -228,7 +228,9 @@ public class EmpServiceImpl implements EmpService {
                     break;
                 case "3":
                     // 기본급 수정
-//                    updateSal(usrID);
+                    BW.write("기본급을 변경할 직원 ID를 입력하세요.: ");
+                    BW.flush();
+                    updateSal(BR.readLine());
                     break;
                 default:
                     BW.write("잘못된 입력입니다.\n\n");
@@ -248,6 +250,7 @@ public class EmpServiceImpl implements EmpService {
         BW.flush();
         pstmt.setString(1, BR.readLine().trim());
         pstmt.executeUpdate();
+        BW.write(usrID + "님의 부서가 변경되었습니다.");
     }
 
     private void updatePos(String usrID) throws SQLException, IOException {
@@ -257,9 +260,16 @@ public class EmpServiceImpl implements EmpService {
         BW.flush();
         pstmt.setString(1, BR.readLine().trim());
         pstmt.executeUpdate();
+        BW.write(usrID + "님의 직급이 변경되었습니다.");
     }
 
-    private void updateSal(String usrID) {
+    private void updateSal(String usrID) throws SQLException, IOException {
 
+        pstmt = conn.prepareStatement("UPDATE EMP SET SAL = ? WHERE USRID = '" + usrID + "'");
+        BW.write("변경할 기본급을 입력하세요: ");
+        BW.flush();
+        pstmt.setString(1, BR.readLine().trim());
+        pstmt.executeUpdate();
+        BW.write(usrID + "님의 기본급이 변경되었습니다.");
     }
 }
