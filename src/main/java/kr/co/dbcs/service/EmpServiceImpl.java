@@ -77,10 +77,15 @@ public class EmpServiceImpl implements EmpService {
 
     // 근로자 인적사항 확인
     @Override
-    public void showEmpInfo() throws SQLException, IOException, ClassNotFoundException, NoSuchAlgorithmException {
+    public void showEmpInfo() throws SQLException, IOException, NoSuchAlgorithmException {
+        rs = stmt.executeQuery("SELECT EMP.*, DEPT.DEPTNAME, POS.POSNAME " +
+                                "FROM EMP " +
+                                "JOIN DEPT ON EMP.DEPTCODE = DEPT.DEPTCODE " +
+                                "JOIN POS ON EMP.POSCODE = POS.POSCODE " +
+                                "WHERE EMP.USRID = '" + usrDTO.getUsrID() + "'");
 
-        rs = stmt.executeQuery("SELECT * FROM EMP WHERE USRID = '" + usrDTO.getUsrID() + "'");
-
+        String deptName = null;
+        String posName = null;
         if (empDTO == null) {
             empDTO = new EmpDTO();
             while (rs.next()) {
@@ -94,20 +99,10 @@ public class EmpServiceImpl implements EmpService {
                 empDTO.setLeaveDay(rs.getByte("LEAVEDAY"));
                 empDTO.setDeptCode(rs.getInt("DEPTCODE"));
                 empDTO.setPosCode(rs.getInt("POSCODE"));
+                deptName = rs.getString("DEPTNAME");
+                posName = rs.getString("POSNAME");
             }
         }
-
-        pstmt = conn.prepareStatement("SELECT DEPTNAME FROM DEPT WHERE DEPTCODE = ?");
-        pstmt.setInt(1, empDTO.getDeptCode());
-        rs = pstmt.executeQuery();
-        rs.next();
-        String deptName = rs.getString("DEPTNAME");
-
-        pstmt = conn.prepareStatement("SELECT POSNAME FROM POS WHERE POSCODE = ?");
-        pstmt.setInt(1, empDTO.getPosCode());
-        rs = pstmt.executeQuery();
-        rs.next();
-        String posName = rs.getString("POSNAME");
 
         while (true) {
             BW.write("\n사용자ID: " + empDTO.getUsrID());
@@ -274,11 +269,14 @@ public class EmpServiceImpl implements EmpService {
     // 직원 검색
     @Override
     public void searchEmp() throws IOException, SQLException {
-
         BW.write("검색할 직원의 이름을 입력하세요.: ");
         BW.flush();
         String name = BR.readLine().trim();
-        pstmt = conn.prepareStatement("SELECT * FROM EMP WHERE NAME LIKE ?");
+        pstmt = conn.prepareStatement("SELECT EMP.*, DEPT.DEPTNAME, POS.POSNAME " +
+                                        "FROM EMP " +
+                                        "JOIN DEPT ON EMP.DEPTCODE = DEPT.DEPTCODE " +
+                                        "JOIN POS ON EMP.POSCODE = POS.POSCODE " +
+                                        "WHERE EMP.NAME LIKE ?");
         pstmt.setString(1, "%" + name + "%");
         rs = pstmt.executeQuery();
 
@@ -287,16 +285,8 @@ public class EmpServiceImpl implements EmpService {
         BW.write("\n================================================================================================================================================================\n");
 
         while (rs.next()) {
-            PreparedStatement subPstmt = conn.prepareStatement("SELECT DEPTNAME FROM DEPT WHERE DEPTCODE = ?");
-            subPstmt.setInt(1, rs.getInt("DEPTCODE"));
-            ResultSet subRs = subPstmt.executeQuery();
-            subRs.next();
-            String deptName = subRs.getString("DEPTNAME");
-            subPstmt = conn.prepareStatement("SELECT POSNAME FROM POS WHERE POSCODE = ?");
-            subPstmt.setInt(1, rs.getInt("POSCODE"));
-            subRs = subPstmt.executeQuery();
-            subRs.next();
-            String posName = subRs.getString("POSNAME");
+            String deptName = rs.getString("DEPTNAME");
+            String posName = rs.getString("POSNAME");
 
             BW.write(String.format("%22s\t%5s\t%10s\t%3s\t%15s\t%12s\t%9s\t%4s\t%10s\t%10s%n",
                     rs.getString("USRID"),
