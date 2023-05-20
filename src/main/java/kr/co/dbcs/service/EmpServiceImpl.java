@@ -9,8 +9,6 @@ import lombok.extern.slf4j.Slf4j;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
 
 import static kr.co.dbcs.util.JdbcManager.*;
 
@@ -244,27 +242,23 @@ public class EmpServiceImpl implements EmpService {
         BW.flush();
         String name = BR.readLine().trim();
         pstmt = conn.prepareStatement("SELECT * FROM emp WHERE name LIKE ?");
-//        pstmt.setString(1, "'%" + name + "%'");
         pstmt.setString(1, "%" + name + "%");
         rs = pstmt.executeQuery();
 
-        List<EmpDTO> empList = new ArrayList<>();
         while (rs.next()) {
-            EmpDTO dto = new EmpDTO();
-            dto.setUsrID(rs.getString(1));
-            dto.setName(rs.getString(2));
-            dto.setBirthDate(rs.getDate(3));
-            dto.setGender(rs.getBoolean(4));
-            dto.setContact(rs.getString(5));
-            dto.setHireDate(rs.getDate(6));
-            dto.setSal(rs.getInt(7));
-            dto.setLeaveDay(rs.getByte(8));
-            dto.setDeptCode(rs.getInt(9));
-            dto.setPosCode(rs.getInt(10));
-            empList.add(dto);
+            BW.write("사용자ID: " + rs.getString(1));
+            BW.write("\t이름: " + rs.getString(2) + "\t");
+            BW.write("\t생년월일: " + rs.getDate(3) + "\t");
+            BW.write("\t성별: " + (rs.getBoolean(4) ? "남" : "여"));
+            BW.write("\t연락처: " + rs.getString(5));
+            BW.write("\t입사일: " + rs.getDate(6));
+            BW.write("\t기본급: " + rs.getInt(7) + "\t");
+            BW.write("\t잔여휴가: " + rs.getByte(8) + "\t");
+            BW.write("\t부서코드: " + rs.getInt(9));
+            BW.write("\t직급코드: " + rs.getInt(10) + "\n");
         }
-
-        BW.write(empList + "\n");
+        BW.write("\n");
+        BW.flush();
     }
 
     private void updateDept() throws SQLException, IOException, NumberFormatException {
