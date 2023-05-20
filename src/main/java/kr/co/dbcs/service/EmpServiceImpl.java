@@ -250,7 +250,7 @@ public class EmpServiceImpl implements EmpService {
         BW.flush();
         pstmt.setString(1, BR.readLine().trim());
         pstmt.executeUpdate();
-        BW.write(usrID + "님의 부서가 변경되었습니다.");
+        BW.write(usrID + "님의 부서가 변경되었습니다.\n");
     }
 
     private void updatePos(String usrID) throws SQLException, IOException {
@@ -260,7 +260,7 @@ public class EmpServiceImpl implements EmpService {
         BW.flush();
         pstmt.setString(1, BR.readLine().trim());
         pstmt.executeUpdate();
-        BW.write(usrID + "님의 직급이 변경되었습니다.");
+        BW.write(usrID + "님의 직급이 변경되었습니다.\n");
     }
 
     private void updateSal(String usrID) throws SQLException, IOException {
@@ -270,6 +270,6 @@ public class EmpServiceImpl implements EmpService {
         BW.flush();
         pstmt.setString(1, BR.readLine().trim());
         pstmt.executeUpdate();
-        BW.write(usrID + "님의 기본급이 변경되었습니다.");
+        BW.write(usrID + "님의 기본급이 변경되었습니다.\n");
     }
 }
