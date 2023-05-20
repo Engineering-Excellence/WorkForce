@@ -30,7 +30,6 @@ public class EmpServiceImpl implements EmpService {
     public void empMenu() throws IOException, SQLException, ClassNotFoundException, NoSuchAlgorithmException {
 
         while (true) {
-
             BW.write("\n======================================================================\n");
             BW.write("|\t\t\t임직원근태관리 근로자 메뉴\t\t     |\n");
             BW.write("======================================================================\n");
@@ -42,10 +41,7 @@ public class EmpServiceImpl implements EmpService {
             BW.write("======================================================================\n");
             BW.flush();
 
-
-            String menu = BR.readLine().trim();
-
-            switch (menu) {
+            switch (BR.readLine().trim()) {
                 case "EXIT":
                 case "exit":
                     BW.write("프로그램을 종료합니다.\n");
@@ -119,7 +115,6 @@ public class EmpServiceImpl implements EmpService {
                     return;
                 case "1":
                     // 인적사항 수정
-                    BW.write("근로자 인적사항 수정\n\n");
                     updateEmpInfo();
                     break;
                 default:
@@ -131,11 +126,18 @@ public class EmpServiceImpl implements EmpService {
     @Override
     public void updateEmpInfo() throws SQLException, IOException, NoSuchAlgorithmException {
 
-        BW.write("\n1. 비밀번호 수정\n");
-        BW.write("2. 연락처 수정\n");
-        BW.write("메뉴를 입력하세요.: ");
+        BW.write("\n======================================================================\n");
+        BW.write("|\t\t\t임직원근태관리 근로자 메뉴\t\t     |\n");
+        BW.write("======================================================================\n");
+        BW.write("|\t    1. 비밀번호 수정\t\t   |\t        2. 연락처 수정\t     |\n");
+        BW.write("======================================================================\n");
+        BW.write("|\t\t원하는 기능을 선택하세요.(0번 : 종료)\t\t     |\n");
+        BW.write("======================================================================\n");
         BW.flush();
+
         switch (BR.readLine().trim()) {
+            case "0":
+                return;
             case "1":
                 updatePw(usrDTO.getUsrID());
                 break;
@@ -194,18 +196,19 @@ public class EmpServiceImpl implements EmpService {
         pstmt.executeUpdate();
     }
 
-    public void adminEmpMenu() throws IOException {
+    public void adminEmpMenu() throws IOException, SQLException {
 
         while (true) {
             BW.write("\n======================================================================\n");
             BW.write("|\t\t     임직원근태관리 관리자 메뉴\t\t\t     |\n");
             BW.write("======================================================================\n");
-            BW.write("|\t    1. 부서관리\t\t   |\t        2. 직급관리\t     |\n");
+            BW.write("|\t    1. 부서이동\t\t   |\t        2. 직급관리\t     |\n");
             BW.write("======================================================================\n");
             BW.write("|\t    3. 급여관리\t\t   |\t                  \t     |\n");
             BW.write("======================================================================\n");
             BW.write("|\t원하는 기능을 선택하세요.(0번 : 홈화면으로 돌아가기)\t     |\n");
             BW.write("======================================================================\n");
+            BW.flush();
 
             switch (BR.readLine().trim()) {
                 case "0":
@@ -213,17 +216,45 @@ public class EmpServiceImpl implements EmpService {
                     return;
                 case "1":
                     // 부서 수정
+                    BW.write("부서를 이동할 직원 ID를 입력하세요.: ");
+                    BW.flush();
+                    updateDept(BR.readLine());
                     break;
                 case "2":
                     // 직급 수정
+                    BW.write("직급을 변경할 직원 ID를 입력하세요.: ");
+                    BW.flush();
+//                    updatePos(BR.readLine());
                     break;
                 case "3":
                     // 기본급 수정
+//                    updateSal(usrID);
                     break;
                 default:
                     BW.write("잘못된 입력입니다.\n\n");
                     break;
             }
         }
+    }
+
+    private void searchEmp() {
+
+    }
+
+    private void updateDept(String usrID) throws SQLException, IOException {
+
+        pstmt = conn.prepareStatement("UPDATE EMP SET DEPTCODE = ? WHERE USRID = '" + usrID + "'");
+        BW.write("변경할 부서를 입력하세요: ");
+        BW.flush();
+        pstmt.setString(1, BR.readLine().trim());
+        pstmt.executeUpdate();
+    }
+
+    private void updatePos(String usrID) throws SQLException, IOException {
+
+    }
+
+    private void updateSal(String usrID) {
+
     }
 }
