@@ -14,10 +14,6 @@ import static kr.co.dbcs.util.JdbcManager.BW;
 @Slf4j
 public class AdminServiceImpl implements AdminService {
 
-    //    private final Connection conn = MANAGER.getConnection();
-//    private final Statement stmt = MANAGER.getStatement();
-//    private PreparedStatement pstmt;
-//    private ResultSet rs;
     private EmpDTO emp = new EmpDTO();
 
     public AdminServiceImpl(String usrID) throws SQLException {
@@ -26,6 +22,7 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public void adminMenu() throws IOException, SQLException, ParseException, ClassNotFoundException {
+
         while (true) {
             showAdminMenu();
 

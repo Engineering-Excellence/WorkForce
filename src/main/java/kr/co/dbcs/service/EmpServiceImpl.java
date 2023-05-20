@@ -96,6 +96,18 @@ public class EmpServiceImpl implements EmpService {
             }
         }
 
+        pstmt = conn.prepareStatement("SELECT DEPTNAME FROM DEPT WHERE DEPTCODE = ?");
+        pstmt.setInt(1, empDTO.getDeptCode());
+        rs = pstmt.executeQuery();
+        rs.next();
+        String deptName = rs.getString("DEPTNAME");
+
+        pstmt = conn.prepareStatement("SELECT POSNAME FROM POS WHERE POSCODE = ?");
+        pstmt.setInt(1, empDTO.getPosCode());
+        rs = pstmt.executeQuery();
+        rs.next();
+        String posName = rs.getString("POSNAME");
+
         while (true) {
             BW.write("사용자ID: " + empDTO.getUsrID());
             BW.write("\n이름: " + empDTO.getName());
@@ -105,8 +117,8 @@ public class EmpServiceImpl implements EmpService {
             BW.write("\n입사일: " + empDTO.getHireDate());
             BW.write("\n기본급: " + empDTO.getSal());
             BW.write("\n잔여휴가: " + empDTO.getLeaveDay());
-            BW.write("\n부서코드: " + empDTO.getDeptCode());
-            BW.write("\n직급코드: " + empDTO.getPosCode() + "\n\n");
+            BW.write("\n소속부서: " + deptName);
+            BW.write("\n직급: " + posName + "\n\n");
             BW.write("메뉴 입력(0: 이전 화면, 1: 인적사항 수정): ");
             BW.flush();
 
@@ -195,10 +207,13 @@ public class EmpServiceImpl implements EmpService {
         pstmt = conn.prepareStatement("UPDATE EMP SET CONTACT = ? WHERE USRID = '" + usrID + "'");
         BW.write("수정할 연락처를 입력하세요: ");
         BW.flush();
-        pstmt.setString(1, BR.readLine().trim());
+        String contact = BR.readLine().trim();
+        pstmt.setString(1, contact);
         pstmt.executeUpdate();
+        empDTO.setContact(contact);
     }
 
+    @Override
     public void adminEmpMenu() throws IOException, SQLException {
 
         while (true) {
@@ -236,32 +251,44 @@ public class EmpServiceImpl implements EmpService {
         }
     }
 
-    private void searchEmp() throws IOException, SQLException {
+    @Override
+    public void searchEmp() throws IOException, SQLException {
 
         BW.write("검색할 직원의 이름을 입력하세요.: ");
         BW.flush();
         String name = BR.readLine().trim();
-        pstmt = conn.prepareStatement("SELECT * FROM emp WHERE name LIKE ?");
+        pstmt = conn.prepareStatement("SELECT * FROM EMP WHERE NAME LIKE ?");
         pstmt.setString(1, "%" + name + "%");
         rs = pstmt.executeQuery();
 
         while (rs.next()) {
-            BW.write("사용자ID: " + rs.getString(1));
-            BW.write("\t이름: " + rs.getString(2) + "\t");
-            BW.write("\t생년월일: " + rs.getDate(3) + "\t");
-            BW.write("\t성별: " + (rs.getBoolean(4) ? "남" : "여"));
-            BW.write("\t연락처: " + rs.getString(5));
-            BW.write("\t입사일: " + rs.getDate(6));
-            BW.write("\t기본급: " + rs.getInt(7) + "\t");
-            BW.write("\t잔여휴가: " + rs.getByte(8) + "\t");
-            BW.write("\t부서코드: " + rs.getInt(9));
-            BW.write("\t직급코드: " + rs.getInt(10) + "\n");
+            BW.write("사용자ID: " + rs.getString("USRID"));
+            BW.write("\t이름: " + rs.getString("NAME") + "\t");
+            BW.write("\t생년월일: " + rs.getDate("BIRTHDATE") + "\t");
+            BW.write("\t성별: " + (rs.getBoolean("GENDER") ? "남" : "여"));
+            BW.write("\t연락처: " + rs.getString("CONTACT"));
+            BW.write("\t입사일: " + rs.getDate("HIREDATE"));
+            BW.write("\t기본급: " + rs.getInt("SAL") + "\t");
+            BW.write("\t잔여휴가: " + rs.getByte("LEAVEDAY") + "\t");
+            PreparedStatement subPstmt = conn.prepareStatement("SELECT DEPTNAME FROM DEPT WHERE DEPTCODE = ?");
+            subPstmt.setInt(1, rs.getInt("DEPTCODE"));
+            ResultSet subRs = subPstmt.executeQuery();
+            subRs.next();
+            String deptName = subRs.getString("DEPTNAME");
+            BW.write("\t소속부서: " + deptName);
+            subPstmt = conn.prepareStatement("SELECT POSNAME FROM POS WHERE POSCODE = ?");
+            subPstmt.setInt(1, rs.getInt("POSCODE"));
+            subRs = subPstmt.executeQuery();
+            subRs.next();
+            String posName = subRs.getString("POSNAME");
+            BW.write("\t직급: " + posName);
         }
         BW.write("\n");
         BW.flush();
     }
 
-    private void updateDept() throws SQLException, IOException, NumberFormatException {
+    @Override
+    public void updateDept() throws SQLException, IOException, NumberFormatException {
 
         searchEmp();
         BW.write("부서를 이동할 직원 ID를 입력하세요.: ");
@@ -277,7 +304,8 @@ public class EmpServiceImpl implements EmpService {
         if (res > 0) BW.write(usrID + "님의 부서가 변경되었습니다.\n");
     }
 
-    private void updatePos() throws SQLException, IOException {
+    @Override
+    public void updatePos() throws SQLException, IOException {
 
         searchEmp();
         BW.write("직급을 변경할 직원 ID를 입력하세요.: ");
@@ -293,7 +321,8 @@ public class EmpServiceImpl implements EmpService {
         if (res > 0) BW.write(usrID + "님의 직급이 변경되었습니다.\n");
     }
 
-    private void updateSal() throws SQLException, IOException {
+    @Override
+    public void updateSal() throws SQLException, IOException {
 
         searchEmp();
         BW.write("기본급을 변경할 직원 ID를 입력하세요.: ");

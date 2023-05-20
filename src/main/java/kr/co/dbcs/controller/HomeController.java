@@ -24,6 +24,7 @@ public class HomeController {
         while (true) {
             BW.write("\n");
             showHomeMenu();
+
             switch (BR.readLine().trim()) {
                 case "0":
                     BW.write("프로그램을 종료합니다.\n");
