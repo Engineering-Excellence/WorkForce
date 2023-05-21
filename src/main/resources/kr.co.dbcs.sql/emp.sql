@@ -14,3 +14,12 @@ CREATE TABLE emp
     deptcode NUMBER,
     CONSTRAINT emp_pk PRIMARY KEY (usrid)
 );
+
+ALTER TABLE emp
+    ADD CONSTRAINT emp_usr_usrid_fk FOREIGN KEY (usrid) REFERENCES usr (usrid);
+
+ALTER TABLE emp
+    ADD CONSTRAINT emp_pos_poscode_fk FOREIGN KEY (poscode) REFERENCES pos (poscode);
+
+ALTER TABLE emp
+    ADD CONSTRAINT emp_dept_deptcode_fk FOREIGN KEY (deptcode) REFERENCES dept (deptcode);
