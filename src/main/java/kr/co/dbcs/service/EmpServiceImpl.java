@@ -78,6 +78,7 @@ public class EmpServiceImpl implements EmpService {
     // 근로자 인적사항 확인
     @Override
     public void showEmpInfo() throws SQLException, IOException, NoSuchAlgorithmException {
+
         rs = stmt.executeQuery("SELECT EMP.*, DEPT.DEPTNAME, POS.POSNAME " +
                                 "FROM EMP " +
                                 "JOIN DEPT ON EMP.DEPTCODE = DEPT.DEPTCODE " +
@@ -269,6 +270,7 @@ public class EmpServiceImpl implements EmpService {
     // 직원 검색
     @Override
     public void searchEmp() throws IOException, SQLException {
+
         BW.write("검색할 직원의 이름을 입력하세요.: ");
         BW.flush();
         String name = BR.readLine().trim();
