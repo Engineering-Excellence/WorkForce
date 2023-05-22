@@ -18,9 +18,9 @@
 <h3>🛠 Tree Structure 🛠</h3>
 <img width="275" alt="WorkForce_tree" src="https://github.com/KOSA-DBCS/WorkForce/assets/109461345/08077d4f-fb30-4f94-bdef-756c9dc8de9c">
 <h3>🛠 ERD 🛠</h3>
-![erd.png](..%2FWorkForce_Screenshot%2Ferd.png)
+<img width="1097" alt="erd" src="https://github.com/KOSA-DBCS/WorkForce/assets/109461345/f5408ce6-793f-4bbe-8a24-b1080a999eeb">
 <h3>🛠 Class Diagram 🛠</h3>
-![diagram](https://github.com/KOSA-DBCS/WorkForce/assets/109461345/8a690f20-b3f5-485c-8b36-ee291937f8dd)
+![diagram](https://github.com/KOSA-DBCS/WorkForce/assets/109461345/da094a60-b6df-4391-8619-77b9bb5cb991)
 <br/>
 <h3>🛠 Deployment 🛠</h3>
 <ul>
