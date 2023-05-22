@@ -16,10 +16,11 @@
 <img src= "https://img.shields.io/badge/git-%23F05033.svg?style=for-the-badge&logo=git&logoColor=white" width="70" height="30"/>
 </p>
 <h3>🛠 Tree Structure 🛠</h3>
-<img width="550" alt="WorkForce_tree" src="https://github.com/KOSA-DBCS/WorkForce/assets/109461345/08077d4f-fb30-4f94-bdef-756c9dc8de9c">
-<br/>
+<img width="275" alt="WorkForce_tree" src="https://github.com/KOSA-DBCS/WorkForce/assets/109461345/08077d4f-fb30-4f94-bdef-756c9dc8de9c">
+<h3>🛠 ERD 🛠</h3>
+![erd.png](..%2FWorkForce_Screenshot%2Ferd.png)
 <h3>🛠 Class Diagram 🛠</h3>
-![WorkForce_dependency](https://github.com/KOSA-DBCS/WorkForce/assets/109461345/5a6cd777-4d9d-414b-9864-b7154e6ca3c2)
+![diagram](https://github.com/KOSA-DBCS/WorkForce/assets/109461345/8a690f20-b3f5-485c-8b36-ee291937f8dd)
 <br/>
 <h3>🛠 Deployment 🛠</h3>
 <ul>
