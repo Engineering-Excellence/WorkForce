@@ -22,6 +22,9 @@ public class EmpServiceImpl implements EmpService {
     private EmpDTO empDTO;
     private UsrDTO usrDTO;
 
+    public EmpServiceImpl() throws SQLException {
+    }
+
     public EmpServiceImpl(UsrDTO dto) throws SQLException {
         usrDTO = dto;
     }

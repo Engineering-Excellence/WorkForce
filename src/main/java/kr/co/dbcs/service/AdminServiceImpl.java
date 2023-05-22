@@ -1,7 +1,6 @@
 package kr.co.dbcs.service;
 
 import kr.co.dbcs.domain.EmpDTO;
-import kr.co.dbcs.domain.UsrDTO;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
@@ -33,7 +32,7 @@ public class AdminServiceImpl implements AdminService {
                     return;
                 case "1":
                     // 직원관리
-                    new EmpServiceImpl(new UsrDTO()).adminEmpMenu();
+                    new EmpServiceImpl().adminEmpMenu();
                     break;
                 case "2":
                     // 출근관리
