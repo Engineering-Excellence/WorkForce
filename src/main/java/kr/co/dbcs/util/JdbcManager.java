@@ -16,12 +16,15 @@ import java.sql.Statement;
 @Slf4j
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class JdbcManager {
-
+	
+//	private static final String URL = "jdbc:oracle:thin:@172.30.1.35:1521:orcl?useUnicode=true&characterEncoding=utf8";
     private static final String URL = "jdbc:oracle:thin:@192.168.0.30:1521:orcl?useUnicode=true&characterEncoding=utf8";
 //    private static final String URL = "jdbc:oracle:thin:@127.0.0.1:1521:XE?useUnicode=true&characterEncoding=utf8";
     private static final String USERNAME = "workforce";
     private static final String PASSWORD = "workforce";
 
+    
+    
     public static final BufferedReader BR = new BufferedReader(new InputStreamReader(System.in));
     public static final BufferedWriter BW = new BufferedWriter(new OutputStreamWriter(System.out));
 

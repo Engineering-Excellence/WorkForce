@@ -24,4 +24,8 @@ public interface AttService {
     void selectMonth() throws IOException, SQLException;
 
     void adminSelectMonth() throws IOException, SQLException;
+    
+    void insertLeave() throws SQLException, IOException;
+    
+    boolean searchLeave(String searchID, int i) throws SQLException;
 }
