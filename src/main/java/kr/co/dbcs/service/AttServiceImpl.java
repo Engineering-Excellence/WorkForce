@@ -28,9 +28,9 @@ public class AttServiceImpl implements AttService {
     public void attAdminMenu() throws IOException, SQLException {
         while (true) {
 
-            BW.write("\n-=-=-=-=-= <출퇴근 기록 관리자 메뉴> =-=-=-=-=-\n" + "\t0. 출퇴근 메뉴 종료\n" + "\t1. 출근하기\n" + "\t2. 퇴근하기\n"
+            BW.write("\n\n-=-=-=-=-= <출퇴근 기록 관리자 메뉴> =-=-=-=-=-\n" + "\t0. 출퇴근 메뉴 종료\n" + "\t1. 출근하기\n" + "\t2. 퇴근하기\n"
                     + "\t3. 출퇴근 기록 전체 확인\n" + "\t4. 출퇴근 기록 ID로 검색\n" + "\t5. 출퇴근 상태 변경하기\n" + "\t6. 출퇴근 상태 입력하기\n"
-                    + "\t7. 월별 근태 기록 ID로 검색\n" + "\n원하는 메뉴를 선택하세요: ");
+                    + "\t7. 월별 근태 기록 ID로 검색\n" + "\t8. 휴가자 반영\n" + "\n원하는 메뉴를 선택하세요: ");
             BW.flush();
 
             switch (BR.readLine().trim()) {
@@ -57,6 +57,9 @@ public class AttServiceImpl implements AttService {
                 case "7":
                     adminSelectMonth();
                     break;
+                case "8":
+                	insertLeave();
+                	break;
                 default:
                     BW.write("잘못된 입력입니다.\n\n");
                     BW.flush();
@@ -70,7 +73,7 @@ public class AttServiceImpl implements AttService {
     public void attMenu() throws IOException, SQLException {
 
         while (true) {
-            BW.write("\n-=-=-=-=-= <출퇴근 기록 근로자 메뉴> =-=-=-=-=-\n" + "\t0. 출퇴근 메뉴 종료\n" + "\t1. 출근하기\n" + "\t2. 퇴근하기\n"
+            BW.write("\n\n-=-=-=-=-= <출퇴근 기록 근로자 메뉴> =-=-=-=-=-\n" + "\t0. 출퇴근 메뉴 종료\n" + "\t1. 출근하기\n" + "\t2. 퇴근하기\n"
                     + "\t3. 출퇴근 기록 확인\n" + "\t4. 월별 출퇴근 기록 조회\n" + "\n원하는 메뉴를 선택하세요: ");
             BW.flush();
 
@@ -175,7 +178,7 @@ public class AttServiceImpl implements AttService {
 
     public void selectAllAtt() throws SQLException, IOException {
 
-        rs = stmt.executeQuery("SELECT * FROM Att");
+        rs = stmt.executeQuery("SELECT * FROM Att order by attdate");
         ArrayList<AttDTO> list = new ArrayList<>();
 
         while (rs.next()) {
@@ -215,7 +218,7 @@ public class AttServiceImpl implements AttService {
 
     public void selectByIDAtt() throws SQLException, IOException {
 
-        pstmt = conn.prepareStatement("SELECT * from Att WHERE usrID = ?");
+        pstmt = conn.prepareStatement("SELECT * from Att WHERE usrID = ? order by attdate");
         BW.write("조회하고 싶은 ID 입력: ");
         BW.flush();
         String searchID = BR.readLine();
@@ -325,7 +328,7 @@ public class AttServiceImpl implements AttService {
 
     public void selectBy() throws SQLException, IOException {
 
-        pstmt = conn.prepareStatement("SELECT * FROM Att WHERE usrID = ?");
+        pstmt = conn.prepareStatement("SELECT * FROM Att WHERE usrID = ? order by attdate");
         pstmt.setString(1, usrID);
         rs = pstmt.executeQuery();
 
@@ -553,4 +556,53 @@ public class AttServiceImpl implements AttService {
         BW.write(sb.toString());
         BW.flush();
     }
+    
+    public void insertLeave() throws SQLException, IOException {
+		String sql = "select to_char(startdate,'yymmdd'), to_char(enddate,'yymmdd') from leave where usrID = ? and apvstat =1";
+
+		String sql2 = "INSERT INTO Att(attID,ATTDATE, USRID, attTYPE) VALUES (Autorecord.nextval, to_date(?, 'yy/mm/dd'), ? , '휴가')";
+
+		ArrayList<Integer> list = new ArrayList<>();
+
+		BW.write("휴가를 입력할 usrID를 입력해주세요.");
+		BW.flush();
+		String searchID = BR.readLine();
+
+		pstmt = conn.prepareStatement(sql);
+		pstmt.setString(1, searchID);
+		rs = pstmt.executeQuery();
+
+		if (!rs.next()) {
+			BW.write("휴가자 명단에 해당 usrID가 없습니다.\n");
+			BW.flush();
+			return;
+		}
+
+		list.add(Integer.parseInt(rs.getString(1)));
+		list.add(Integer.parseInt(rs.getString(2)));
+
+		for (int i = list.get(0); i <= list.get(1); i++) {
+			if(searchLeave(searchID, i)) {
+				BW.write(i+"에 이미 해당 ID가 휴가로 등록되어 있습니다.\n");
+				BW.flush();
+				continue;
+			}
+			pstmt = conn.prepareStatement(sql2);
+			pstmt.setInt(1, i);
+			pstmt.setString(2, searchID);
+			pstmt.executeUpdate();
+			log.info("AttType Leave INSERT COMPLETE\n");
+			BW.write("휴가 입력이 완료 되었습니다.\n");
+			BW.flush();
+		}
+	}
+
+	public boolean searchLeave(String searchID, int i) throws SQLException {
+		String sql = "select to_char(attdate,'yymmdd') from att where usrID = ? and attdate = to_date(?,'yymmdd')";
+		PreparedStatement pstmt = conn.prepareStatement(sql);
+		pstmt.setString(1, searchID);
+		pstmt.setInt(2, i);
+		rs = pstmt.executeQuery();
+		return rs.next();
+	}
 }
